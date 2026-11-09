@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import type { Cloth, ClothInput, Expense, ExpenseInput, OutfitPick, Trip, TripInput } from './types'
@@ -26,7 +27,18 @@ export interface Repo {
 }
 
 const TRIP_COLS = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
-const EXP_COLS = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,is_paid,created_at,updated_at'
+const EXP_COLS_BASE = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,created_at,updated_at'
+
+/** Which optional DB migrations are applied (detected at runtime so the app keeps working before SQL is run). */
+export const dbFeatures = reactive({ isPaid: true, outfits: true })
+
+/** Postgres/PostgREST "column or table does not exist" style errors. */
+export function isMissingSchema(err: unknown): boolean {
+  const e = err as { code?: string; message?: string } | null
+  if (!e) return false
+  if (['42703', '42P01', 'PGRST204', 'PGRST205'].includes(e.code ?? '')) return true
+  return /does not exist|Could not find the/i.test(e.message ?? '')
+}
 
 const toTrip = (r: Record<string, unknown>): Trip => ({ ...(r as unknown as Trip), rate_to_thb: Number(r.rate_to_thb) })
 const CLOTH_COLS = 'id,trip_id,owner,name,kind,photo_url,photo_path,note'
@@ -64,21 +76,46 @@ class SupabaseRepo implements Repo {
     if (error) throw error
   }
 
+  private get expCols() { return dbFeatures.isPaid ? EXP_COLS_BASE + ',is_paid' : EXP_COLS_BASE }
+  private expRow(input: ExpenseInput): Partial<ExpenseInput> {
+    if (dbFeatures.isPaid) return input
+    const { is_paid: _ignored, ...rest } = input
+    return rest
+  }
+  /** run once; if the is_paid column is missing, switch it off and retry without it */
+  private async withIsPaidFallback<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn()
+    } catch (e) {
+      if (dbFeatures.isPaid && isMissingSchema(e)) {
+        dbFeatures.isPaid = false
+        return fn()
+      }
+      throw e
+    }
+  }
+
   async listExpenses(tripId: string) {
-    const { data, error } = await this.db.from('expenses').select(EXP_COLS).eq('trip_id', tripId)
-      .order('spent_on', { ascending: false }).order('created_at', { ascending: false })
-    if (error) throw error
-    return (data ?? []).map(toExpense)
+    return this.withIsPaidFallback(async () => {
+      const { data, error } = await this.db.from('expenses').select(this.expCols).eq('trip_id', tripId)
+        .order('spent_on', { ascending: false }).order('created_at', { ascending: false })
+      if (error) throw error
+      return ((data ?? []) as unknown as Record<string, unknown>[]).map(toExpense)
+    })
   }
   async createExpense(input: ExpenseInput) {
-    const { data, error } = await this.db.from('expenses').insert(input).select(EXP_COLS).single()
-    if (error) throw error
-    return toExpense(data)
+    return this.withIsPaidFallback(async () => {
+      const { data, error } = await this.db.from('expenses').insert(this.expRow(input)).select(this.expCols).single()
+      if (error) throw error
+      return toExpense(data as unknown as Record<string, unknown>)
+    })
   }
   async updateExpense(id: string, input: ExpenseInput) {
-    const { data, error } = await this.db.from('expenses').update(input).eq('id', id).select(EXP_COLS).single()
-    if (error) throw error
-    return toExpense(data)
+    return this.withIsPaidFallback(async () => {
+      const { data, error } = await this.db.from('expenses').update(this.expRow(input)).eq('id', id).select(this.expCols).single()
+      if (error) throw error
+      return toExpense(data as unknown as Record<string, unknown>)
+    })
   }
   async removeExpense(id: string) {
     const { error } = await this.db.from('expenses').delete().eq('id', id)

@@ -6,7 +6,7 @@ import PageHeader from '../../components/PageHeader.vue'
 import ExpenseForm from '../../components/ExpenseForm.vue'
 import TripForm from '../../components/TripForm.vue'
 import { showToast } from '../../lib/copy'
-import { errMessage, repo } from '../../lib/repo'
+import { dbFeatures, errMessage, repo } from '../../lib/repo'
 import { baht, toSatang } from '../../lib/settle'
 import { useTrip } from '../../lib/tripContext'
 import { CATEGORIES, PEOPLE, SPLITS, sym, type Category, type Expense, type ExpenseInput, type TripInput } from '../../lib/types'
@@ -145,7 +145,7 @@ async function removeTrip() {
       <h3 class="mb-1.5 text-xs font-semibold text-mute">{{ showDate(d) }}</h3>
       <div class="card divide-y divide-black/5 !p-0">
         <div v-for="e in list" :key="e.id" class="flex w-full items-center gap-2 py-1 pr-3.5 pl-1.5" :class="e.is_paid ? '' : 'bg-amber-50/70'">
-          <button class="grid size-10 shrink-0 place-items-center" :aria-label="e.is_paid ? 'จ่ายแล้ว แตะเพื่อเปลี่ยนเป็นยังไม่จ่าย' : 'ยังไม่จ่าย แตะเพื่อติ๊กจ่ายแล้ว'" @click="togglePaid(e)">
+          <button v-if="dbFeatures.isPaid" class="grid size-10 shrink-0 place-items-center" :aria-label="e.is_paid ? 'จ่ายแล้ว แตะเพื่อเปลี่ยนเป็นยังไม่จ่าย' : 'ยังไม่จ่าย แตะเพื่อติ๊กจ่ายแล้ว'" @click="togglePaid(e)">
             <span class="grid size-6 place-items-center rounded-md ring-2" :class="e.is_paid ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white ring-black/25'">
               <Check v-if="e.is_paid" class="size-4" />
             </span>
@@ -173,6 +173,6 @@ async function removeTrip() {
     <Plus class="size-7" />
   </button>
 
-  <ExpenseForm v-if="formOpen" :expense="editing" :rate="trip.rate_to_thb" :local-currency="trip.currency" @save="onSave" @remove="onRemove" @close="formOpen = false" />
+  <ExpenseForm v-if="formOpen" :expense="editing" :rate="trip.rate_to_thb" :local-currency="trip.currency" :show-paid="dbFeatures.isPaid" @save="onSave" @remove="onRemove" @close="formOpen = false" />
   <TripForm v-if="tripFormOpen" :trip="trip" @save="saveTrip" @remove="removeTrip" @close="tripFormOpen = false" />
 </template>

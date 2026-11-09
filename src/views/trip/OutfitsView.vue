@@ -4,7 +4,7 @@ import { Check, Plus, Shirt, X } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import ClothForm, { type ClothFormResult } from '../../components/ClothForm.vue'
 import { showToast } from '../../lib/copy'
-import { errMessage, repo } from '../../lib/repo'
+import { dbFeatures, errMessage, isMissingSchema, repo } from '../../lib/repo'
 import { useTrip } from '../../lib/tripContext'
 import { KINDS, PEOPLE, type Cloth, type ClothKind, type OutfitPick, type Person } from '../../lib/types'
 import { daysByCloth, outfitFor, tripDays, wardrobeStats } from '../../lib/wardrobe'
@@ -37,7 +37,9 @@ async function load() {
     error.value = null
     if (!day.value || !days.value.includes(day.value)) day.value = defaultDay()
   } catch (e) {
-    if (my === seq) error.value = errMessage(e)
+    if (my !== seq) return
+    if (isMissingSchema(e)) dbFeatures.outfits = false
+    else error.value = errMessage(e)
   } finally {
     if (my === seq) loading.value = false
   }
@@ -150,7 +152,10 @@ async function removeCloth() {
 <template>
   <PageHeader kicker="OUTFITS" :title="`ชุดแต่งกาย · ${trip.name}`" sub="จัดว่าวันไหนใส่ชุดไหน" accent="#A07A4F" />
 
-  <div class="space-y-4 px-4">
+  <div v-if="!dbFeatures.outfits" class="card mx-4 text-sm text-mute">
+    ฟีเจอร์ชุดแต่งกายยังไม่พร้อมใช้ — ต้องรันไฟล์ <code>supabase/migrations/002–004</code> ใน Supabase SQL Editor ก่อน
+  </div>
+  <div v-else class="space-y-4 px-4">
     <p v-if="error" class="rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800">{{ error }}</p>
 
     <!-- totals -->
@@ -233,7 +238,7 @@ async function removeCloth() {
     </section>
   </div>
 
-  <button class="fixed right-5 bottom-24 z-30 grid size-14 place-items-center rounded-full bg-brick text-white shadow-lg active:scale-95" aria-label="เพิ่มเสื้อผ้า" @click="openNew">
+  <button v-if="dbFeatures.outfits" class="fixed right-5 bottom-24 z-30 grid size-14 place-items-center rounded-full bg-brick text-white shadow-lg active:scale-95" aria-label="เพิ่มเสื้อผ้า" @click="openNew">
     <Plus class="size-7" />
   </button>
 

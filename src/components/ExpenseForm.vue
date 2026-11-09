@@ -4,7 +4,7 @@ import { X } from 'lucide-vue-next'
 import { CATEGORIES, CURRENCIES, PEOPLE, SPLITS, type Category, type Expense, type ExpenseInput, type Person, type Split } from '../lib/types'
 
 type Input = Omit<ExpenseInput, 'trip_id'>
-const props = defineProps<{ expense: Expense | null; rate: number; localCurrency: string }>()
+const props = defineProps<{ expense: Expense | null; rate: number; localCurrency: string; showPaid?: boolean }>()
 const emit = defineEmits<{ save: [input: Input]; remove: []; close: [] }>()
 const currencies = props.localCurrency === 'THB' ? ['THB'] : [props.localCurrency, 'THB']
 
@@ -121,7 +121,7 @@ function submit() {
           </div>
         </div>
 
-        <label class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
+        <label v-if="showPaid !== false" class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
           <input v-model="f.is_paid" type="checkbox" class="size-5 accent-[#1b4965]" />
           <span class="text-sm font-medium">จ่ายแล้ว</span>
           <span class="ml-auto text-xs text-mute">{{ f.is_paid ? 'นับในยอดรวมและยอดโอน' : 'ยังไม่จ่าย · เก็บไว้เป็นรายการรอจ่าย' }}</span>
