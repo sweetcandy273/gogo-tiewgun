@@ -1,27 +1,7 @@
 -- gogo เที่ยวกัน — run once in Supabase > SQL Editor.
--- Member emails are NOT stored in this repo: add them with supabase/members.example.sql.
 
--- 1) Allow-list: only these logins may read/write (even if someone else gets an account)
-create table if not exists public.trip_members (
-  email text primary key
-);
-alter table public.trip_members enable row level security;
--- no policies: clients can neither read nor change the allow-list
-
-create or replace function public.is_trip_member()
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1 from public.trip_members m
-    where lower(m.email) = lower(coalesce(auth.jwt() ->> 'email', ''))
-  );
-$$;
-revoke all on function public.is_trip_member() from public;
-grant execute on function public.is_trip_member() to authenticated;
+-- No login: the site is open. Anyone with the site URL can read and edit trips/expenses.
+-- Tables keep strict CHECK constraints; RLS stays on with explicit open policies.
 
 create or replace function public.touch_updated_at()
 returns trigger
@@ -54,8 +34,8 @@ for each row execute function public.touch_updated_at();
 
 alter table public.trips enable row level security;
 drop policy if exists "members all trips" on public.trips;
-create policy "members all trips" on public.trips for all to authenticated
-  using (public.is_trip_member()) with check (public.is_trip_member());
+drop policy if exists "open trips" on public.trips;
+create policy "open trips" on public.trips for all to anon, authenticated using (true) with check (true);
 
 -- 3) Expenses (per trip)
 create table if not exists public.expenses (
@@ -69,7 +49,6 @@ create table if not exists public.expenses (
   paid_by     text check (paid_by in ('aum','tiw')),          -- null = not set yet
   split       text not null default 'half' check (split in ('half','aum','tiw')),
   note        text check (note is null or char_length(note) <= 500),
-  created_by  uuid default auth.uid() references auth.users(id) on delete set null,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -81,8 +60,8 @@ for each row execute function public.touch_updated_at();
 
 alter table public.expenses enable row level security;
 drop policy if exists "members all expenses" on public.expenses;
-create policy "members all expenses" on public.expenses for all to authenticated
-  using (public.is_trip_member()) with check (public.is_trip_member());
+drop policy if exists "open expenses" on public.expenses;
+create policy "open expenses" on public.expenses for all to anon, authenticated using (true) with check (true);
 
 -- 4) Realtime: the other phone sees changes without refreshing
 do $$

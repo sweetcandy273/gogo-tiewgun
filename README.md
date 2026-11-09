@@ -1,6 +1,6 @@
 # gogo เที่ยวกัน
 
-เว็บแอปเก็บทริปของอุ้มกับทิว หน้าแรกเป็นรายการ **Trips** (ชิงเต่า ม.ค. 2570 คือทริป 1) แต่ละทริปมี **ค่าใช้จ่ายร่วมกัน 2 คน** (เพิ่ม/แก้/ลบ, สกุลท้องถิ่น/฿, ใครจ่าย, หาร 2 หรือของคนเดียว, สรุปว่าใครต้องโอนให้ใคร) และถ้ามีไกด์ จะมีแผนรายวัน คำศัพท์ เช็กลิสต์
+เว็บแอปเก็บทริปของอุ้มกับทิว (ไม่ต้องล็อกอิน) หน้าแรกเป็นรายการ **Trips** (ชิงเต่า ม.ค. 2570 คือทริป 1) แต่ละทริปมี **ค่าใช้จ่ายร่วมกัน 2 คน** (เพิ่ม/แก้/ลบ, สกุลท้องถิ่น/฿, ใครจ่าย, หาร 2 หรือของคนเดียว, สรุปว่าใครต้องโอนให้ใคร) และถ้ามีไกด์ จะมีแผนรายวัน คำศัพท์ เช็กลิสต์
 
 **Stack:** Vue 3 + Vite + TypeScript + Tailwind CSS 4 · Supabase (Postgres + Auth + Realtime) · Netlify (static hosting)
 
@@ -12,8 +12,7 @@ src/
   lib/repo.ts           Supabase repo + Local repo (โหมดทดลอง)
   views/TripsView.vue   หน้าแรก: รายการทริป + สร้างทริปใหม่
   views/trip/           หน้าในทริป: ภาพรวม / รายวัน / ค่าใช้จ่าย / คำศัพท์ / ข้อมูล
-supabase/schema.sql     ตาราง trips, expenses + RLS + realtime + ทริป 1
-supabase/members.example.sql  เพิ่มอีเมลที่ล็อกอินได้ (อย่า commit อีเมลจริง)
+supabase/schema.sql     ตาราง trips, expenses + RLS (เปิดให้ทุกคน) + realtime + ทริป 1
 supabase/seed.sql       ค่าใช้จ่ายชิงเต่าที่จ่ายไปแล้ว (ไม่มีเสื้อผ้า) — ไม่บังคับ
 public/trips/           รูปของแต่ละทริป (WebP)
 ```
@@ -31,19 +30,17 @@ npm run build      # type-check + build → dist/
 
 ## ตั้งค่า Supabase (ทำครั้งเดียว)
 
-1. สร้างโปรเจกต์ที่ supabase.com (region ใกล้ ๆ เช่น Singapore)
-2. **Authentication → Users → Add user** สร้าง 2 บัญชี (อีเมล + รหัสผ่าน) ให้อุ้มและทิว
-3. **Authentication → Sign In / Providers** ปิด *Allow new users to sign up* (กันคนอื่นสมัครเอง)
-4. รัน `supabase/schema.sql` ใน **SQL Editor** แล้วรัน `members.example.sql` โดยแก้เป็น 2 อีเมลจริงจากข้อ 2 (อีเมลจริงไม่อยู่ใน repo)
-5. (ไม่บังคับ) รัน `supabase/seed.sql` เพื่อใส่ค่าแพ็กเกจ/Naiya/ประกันที่จ่ายไปแล้ว แล้วไปตั้ง "ใครจ่าย" ในแอป
-6. **Project Settings → API** คัดลอก Project URL และ publishable key (หรือ anon key) ใส่ `.env.local`:
+1. สร้างโปรเจกต์ที่ supabase.com (region Singapore) เปิด Data API ไว้
+2. รัน `supabase/schema.sql` ใน **SQL Editor** (สร้างตาราง + ทริป 1) และ `supabase/seed.sql` ถ้าอยากใส่ค่าใช้จ่ายที่จ่ายไปแล้ว
+3. **Project Settings → API Keys** คัดลอก Project URL และ publishable key ใส่ `.env.local`:
 
 ```
 VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_KEY=sb_publishable_xxx   # หรือ anon key
+VITE_SUPABASE_KEY=sb_publishable_xxx
 ```
 
-> คีย์ publishable/anon ใส่ในหน้าเว็บได้ตามปกติ ความปลอดภัยมาจาก RLS: อ่าน/เขียนได้เฉพาะอีเมลใน `trip_members` ที่ล็อกอินแล้ว **ห้ามใช้ service_role key ในเว็บเด็ดขาด**
+> **เว็บนี้ไม่มีระบบล็อกอิน** ใครมีลิงก์เว็บก็ดูและแก้/ลบทริปกับค่าใช้จ่ายได้ (เลือกแบบนี้เอง) ฐานข้อมูลยังบังคับรูปแบบข้อมูลด้วย CHECK constraints
+> publishable key ใส่ในหน้าเว็บได้ตามปกติ **ห้ามใช้ secret / service_role key ในเว็บเด็ดขาด**
 
 ## Deploy บน Netlify
 

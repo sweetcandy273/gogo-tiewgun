@@ -1,13 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { initAuth, session } from './lib/auth'
-import { isDemo } from './lib/supabase'
 
 export const router = createRouter({
   history: createWebHistory(),
   scrollBehavior: () => ({ top: 0 }),
   routes: [
     { path: '/', name: 'trips', component: () => import('./views/TripsView.vue') },
-    { path: '/login', name: 'login', component: () => import('./views/LoginView.vue'), meta: { public: true } },
     {
       path: '/t/:slug',
       component: () => import('./views/trip/TripLayout.vue'),
@@ -22,11 +19,4 @@ export const router = createRouter({
     },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
-})
-
-router.beforeEach(async (to) => {
-  if (to.meta.public || isDemo) return true
-  await initAuth()
-  if (!session.value) return { name: 'login', query: { next: to.fullPath } }
-  return true
 })

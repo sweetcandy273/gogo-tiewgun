@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { ChevronRight, LogOut, Plus } from 'lucide-vue-next'
+import { ChevronRight, Plus } from 'lucide-vue-next'
 import TripForm from '../components/TripForm.vue'
-import { signOut } from '../lib/auth'
 import { errMessage, repo } from '../lib/repo'
-import { isDemo } from '../lib/supabase'
 import type { Trip, TripInput } from '../lib/types'
 import { guides } from '../trips/registry'
 
@@ -44,11 +42,6 @@ function range(t: Trip) {
   return t.end_date ? `${a} – ${dateFmt.format(new Date(t.end_date + 'T00:00:00'))}` : a
 }
 const cover = (t: Trip) => guides[t.slug]?.hero.src
-
-async function logout() {
-  await signOut()
-  await router.replace('/login')
-}
 </script>
 
 <template>
@@ -59,7 +52,6 @@ async function logout() {
         <h1 class="text-3xl font-bold text-navy">gogo เที่ยวกัน</h1>
         <p class="text-sm text-mute">ทริปของอุ้มกับทิว</p>
       </div>
-      <button v-if="!isDemo" class="flex items-center gap-1 text-xs text-mute" @click="logout"><LogOut class="size-4" /> ออก</button>
     </header>
 
     <p v-if="error" class="mb-3 rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800">{{ error }}</p>
