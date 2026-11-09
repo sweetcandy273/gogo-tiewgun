@@ -9,7 +9,9 @@ const guide: Guide = {
     kicker: 'QINGDAO · 青岛', title: 'ชิงเต่า 13–18 ม.ค. 2570',
     sub: 'ภูเก็ต → กวางโจว → ชิงเต่า · 6 วัน 5 คืน', departAt: '2027-01-13T17:25:00+07:00',
   },
-  days: data.days as Day[],
+  amapCity: '青岛',
+  // DAY 1 and DAY 2 morning are in Guangzhou
+  days: (data.days as Day[]).map((d, i) => ({ ...d, city: i < 2 ? '广州' : '青岛' })),
   phrases: data.phrases as { section: string; items: Phrase[] }[],
   drinks: [
     ['แก้วเล็ก', '小杯', 'xiǎo bēi'], ['แก้วกลาง', '中杯', 'zhōng bēi'], ['แก้วใหญ่', '大杯', 'dà bēi'],
@@ -26,14 +28,14 @@ const guide: Guide = {
   bookingNote: 'เลขการจองดูในแอป Trip.com · กระเป๋าโหลดส่งต่อถึงปลายทาง ไม่ต้องรับที่กวางโจว · ถือขึ้นเครื่อง ≤ 8 กก. · โหลด 1 ใบ ≤ 23 กก.',
   hotels: [
     {
-      city: 'กวางโจว · 1 คืน (13→14 ม.ค.)', name: 'Naiya Hotel',
+      city: 'กวางโจว · 1 คืน (13→14 ม.ค.)', amapCity: '广州', name: 'Naiya Hotel',
       zh: '奈亚酒店(广州白云国际机场人和地铁站店)',
       address: 'No.27, Shangye 1st Street, Renhe Town, Baiyun District',
       phones: ['+86-20-86030001', '+86-18124264212'],
       note: 'รถรับส่งสนามบินฟรี 24 ชม. (จองล่วงหน้า 1 ชม.)', photo: `${P}/photo-01.webp`,
     },
     {
-      city: 'ชิงเต่า · 4 คืน (14→18 ม.ค.)', name: '12 Shan Yuntang Hotel',
+      city: 'ชิงเต่า · 4 คืน (14→18 ม.ค.)', amapCity: '青岛', name: '12 Shan Yuntang Hotel',
       zh: '十二山·云棠酒店(青岛登州路啤酒博物馆店)', address: '寿光路18号 (Shouguang Road No.18)',
       phones: ['+86-18561709051'],
       note: 'ตึกอิฐแดง 3 ชั้น ป้ายไฟ 云棠酒店 · ใกล้พิพิธภัณฑ์เบียร์', photo: `${P}/photo-02.webp`,

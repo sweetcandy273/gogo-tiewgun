@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ChevronLeft, ChevronRight, Copy } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, MapPin } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
-import { copyText, onZhClick } from '../../lib/copy'
+import { amapSearchUrl, amapCity } from '../../lib/amap'
+import { copyPlace, onZhClick } from '../../lib/copy'
 import { useTrip } from '../../lib/tripContext'
 
 const props = defineProps<{ n: string }>()
@@ -14,6 +15,7 @@ const idx = computed(() => {
   return Number.isInteger(i) && i >= 0 && i < days.length ? i : 0
 })
 const day = computed(() => days[idx.value])
+watchEffect(() => { amapCity.value = day.value?.city ?? guide?.amapCity ?? '' })
 </script>
 
 <template>
@@ -21,7 +23,7 @@ const day = computed(() => days[idx.value])
   <div v-else @click="onZhClick">
     <PageHeader :kicker="day.label" :title="day.title" :sub="day.transport" :accent="day.accent" />
     <div class="px-4">
-      <p class="mb-3 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) เพื่อคัดลอกไปค้นใน Amap</p>
+      <p class="mb-3 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "เปิดใน Amap"</p>
 
       <ol class="relative space-y-3 border-l-2 pl-5" :style="{ borderColor: day.accent + '55' }">
         <li v-for="(it, i) in day.items" :key="i" class="relative">
@@ -51,9 +53,9 @@ const day = computed(() => days[idx.value])
         <section v-for="c in day.cards" :key="c.title" class="card">
           <div class="mb-1.5 flex items-start justify-between gap-2">
             <h3 class="font-bold text-navy">{{ c.title }}</h3>
-            <button v-if="c.zh.length === 1" class="btn-ghost !px-2 !py-1 text-xs" @click.stop="copyText(c.zh[0])">
-              <Copy class="size-3.5" /> คัดลอก
-            </button>
+            <a v-if="c.zh.length === 1" :href="amapSearchUrl(c.zh[0])" target="_blank" rel="noopener noreferrer" class="btn-ghost !px-2 !py-1 text-xs" @click.stop="copyPlace(c.zh[0])">
+              <MapPin class="size-3.5" /> Amap
+            </a>
           </div>
           <div class="rich text-sm leading-relaxed text-ink/85" v-html="c.body" />
         </section>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ChevronRight, Phone, Plane, Wallet } from 'lucide-vue-next'
-import { copyText } from '../../lib/copy'
+import { ChevronRight, MapPin, Phone, Plane, Wallet } from 'lucide-vue-next'
+import { amapCity, amapSearchUrl } from '../../lib/amap'
+import { copyPlace } from '../../lib/copy'
 import ZhText from '../../components/ZhText.vue'
 import { useTrip } from '../../lib/tripContext'
 
 const { trip, guide, base } = useTrip()
+amapCity.value = guide?.amapCity ?? ''
 
 const now = ref(Date.now())
 const timer = setInterval(() => { now.value = Date.now() }, 60_000)
@@ -80,10 +82,13 @@ const countdown = computed(() => {
             <div class="space-y-1.5 p-4">
               <p class="text-xs font-semibold text-brick">{{ h.city }}</p>
               <h3 class="font-bold">{{ h.name }}</h3>
-              <button class="zh-chip text-left text-sm" @click="copyText(h.zh)">{{ h.zh }}</button>
+              <button class="zh-chip text-left text-sm" @click="copyPlace(h.zh)">{{ h.zh }}</button>
               <p class="text-sm text-mute"><ZhText :text="h.address" /></p>
               <p class="text-xs text-mute">{{ h.note }}</p>
               <div class="flex flex-wrap gap-2 pt-1">
+                <a :href="amapSearchUrl(h.zh, h.amapCity)" target="_blank" rel="noopener noreferrer" class="btn-primary !py-1.5 text-xs">
+                  <MapPin class="size-3.5" /> เปิดใน Amap
+                </a>
                 <a v-for="p in h.phones" :key="p" :href="`tel:${p.replace(/[^+\d]/g, '')}`" class="btn-ghost !py-1.5 text-xs">
                   <Phone class="size-3.5" /> {{ p }}
                 </a>
@@ -91,7 +96,7 @@ const countdown = computed(() => {
             </div>
           </article>
         </div>
-        <p class="mt-2 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) ตรงไหนก็ได้เพื่อคัดลอกไปค้นใน Amap</p>
+        <p class="mt-2 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "เปิดใน Amap"</p>
       </section>
     </template>
   </div>

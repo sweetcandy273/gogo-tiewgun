@@ -13,6 +13,8 @@ export interface Day {
   title: string
   transport: string
   accent: string
+  /** Amap city hint, e.g. '青岛' */
+  city?: string
   items: DayItem[]
   cards: { title: string; body: string; zh: string[] }[]
   photos: { src: string; caption: string }[]
@@ -22,13 +24,15 @@ export interface Phrase { meaning: string; zh: string; pinyin: string; read: str
 /** Optional hand-written guide for a trip (itinerary, phrases, info). Keyed by trips.slug. */
 export interface Guide {
   hero: { src: string; alt: string; kicker: string; title: string; sub: string; departAt?: string }
+  /** default Amap city hint for the trip */
+  amapCity?: string
   days: Day[]
   phrases: { section: string; items: Phrase[] }[]
   drinks?: readonly (readonly [string, string, string])[]
   flights: { leg: string; date: string; no: string; route: string; time: string }[]
   flightsTitle?: string
   bookingNote?: string
-  hotels: { city: string; name: string; zh: string; address: string; phones: string[]; note: string; photo: string }[]
+  hotels: { city: string; amapCity?: string; name: string; zh: string; address: string; phones: string[]; note: string; photo: string }[]
   emergency: { label: string; value: string }[]
   checklist: string[]
   budget: { item: string; thb: string; status: 'ok' | 'est' }[]

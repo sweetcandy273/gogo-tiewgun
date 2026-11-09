@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { copyText } from '../lib/copy'
+import { copyPlace } from '../lib/copy'
 
 /** Plain text where every Chinese run becomes a tap-to-copy chip. */
 const props = defineProps<{ text: string }>()
@@ -20,5 +20,5 @@ const parts = computed(() => {
 </script>
 
 <template>
-  <span><template v-for="(p, i) in parts" :key="i"><span v-if="p.zh" class="zh-chip" role="button" @click.stop.prevent="copyText(p.t)">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></span>
+  <span><template v-for="(p, i) in parts" :key="i"><span v-if="p.zh" class="zh-chip" role="button" @click.stop.prevent="copyPlace(p.t)">{{ p.t }}</span><template v-else>{{ p.t }}</template></template></span>
 </template>
