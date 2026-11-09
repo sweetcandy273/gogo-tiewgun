@@ -54,6 +54,21 @@ describe('settle (trip expenses)', () => {
   }
 })
 
+describe('already transferred (settled) amounts', () => {
+  const cases = [
+    { name: 'settled shared item: only the half that was owed', items: [ex({ amount: 770.19, settled: true })], want: { from: 'tiw', to: 'aum', satang: 38509 } },
+    { name: 'settled tiw-only item paid by aum: full amount', items: [ex({ amount: 300, split: 'tiw', settled: true })], want: { from: 'tiw', to: 'aum', satang: 30000 } },
+    { name: 'settled own item: nothing transferred', items: [ex({ amount: 300, split: 'aum', settled: true })], want: null },
+    { name: 'unsettled items do not count', items: [ex({ amount: 100 })], want: null },
+  ]
+  for (const c of cases) it(c.name, () => expect(settle(c.items, 4.6).settledTransfer).toEqual(c.want))
+  it('clothes: settled price counts as transferred', () => {
+    const got = clothesMoney([cl({ price: 310, settled: true }), cl({ price: 360 })])
+    expect(got.settledTransfer).toEqual({ from: 'tiw', to: 'aum', satang: 31000 })
+    expect(got.transfer).toEqual({ from: 'tiw', to: 'aum', satang: 36000 })
+  })
+})
+
 describe('clothesMoney', () => {
   const cases: { name: string; items: Cloth[]; want: ReturnType<typeof clothesMoney>['transfer']; total: number; billable: number }[] = [
     { name: 'aum bought tiw item -> tiw owes', items: [cl({ price: 360 })], want: { from: 'tiw', to: 'aum', satang: 36000 }, total: 36000, billable: 1 },

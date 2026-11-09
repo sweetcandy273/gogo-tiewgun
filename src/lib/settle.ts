@@ -35,6 +35,9 @@ export interface Settlement {
   /** still owed from unsettled expenses */
   netAum: number
   transfer: Transfer
+  /** what was owed on the ticked items = already transferred */
+  settledNetAum: number
+  settledTransfer: Transfer
   byCategory: Record<Category, number>
 }
 
@@ -61,6 +64,7 @@ export function settle(expenses: readonly Expense[], rateToThb: number): Settlem
   let settled = 0
   let settledCount = 0
   let netAum = 0
+  let settledNetAum = 0
 
   for (const e of expenses) {
     const s = toSatang(e, rateToThb)
@@ -77,19 +81,22 @@ export function settle(expenses: readonly Expense[], rateToThb: number): Settlem
     share.aum += sh.aum
     share.tiw += sh.tiw
 
+    const owed = (e.paid_by === 'aum' ? s : 0) - sh.aum
     if (e.settled) {
       settled += s
       settledCount++
+      settledNetAum += owed
       continue
     }
-    netAum += (e.paid_by === 'aum' ? s : 0) - sh.aum
+    netAum += owed
   }
 
   return {
     totalSatang: total, paid, share,
     unassignedSatang: unassigned, unassignedCount,
     settledSatang: settled, settledCount,
-    netAum, transfer: toTransfer(netAum), byCategory,
+    netAum, transfer: toTransfer(netAum),
+    settledNetAum, settledTransfer: toTransfer(settledNetAum), byCategory,
   }
 }
 
@@ -103,6 +110,9 @@ export interface ClothesMoney {
   /** still owed for clothes bought for the other person */
   netAum: number
   transfer: Transfer
+  /** already paid back (ticked) */
+  settledNetAum: number
+  settledTransfer: Transfer
   /** items one person bought for the other (the ones that can be ticked) */
   billable: Cloth[]
 }
@@ -113,6 +123,7 @@ export function clothesMoney(clothes: readonly Cloth[]): ClothesMoney {
   let unassignedCount = 0
   let settled = 0
   let netAum = 0
+  let settledNetAum = 0
   const billable: Cloth[] = []
 
   for (const c of clothes) {
@@ -124,10 +135,14 @@ export function clothesMoney(clothes: readonly Cloth[]): ClothesMoney {
     const payer: Person = c.paid_by ?? 'aum'
     if (payer === c.owner) continue
     billable.push(c)
-    if (c.settled) { settled += s; continue }
-    netAum += payer === 'aum' ? s : -s
+    const owed = payer === 'aum' ? s : -s
+    if (c.settled) { settled += s; settledNetAum += owed; continue }
+    netAum += owed
   }
-  return { totalSatang: total, byOwner, unassignedCount, settledSatang: settled, netAum, transfer: toTransfer(netAum), billable }
+  return {
+    totalSatang: total, byOwner, unassignedCount, settledSatang: settled,
+    netAum, transfer: toTransfer(netAum), settledNetAum, settledTransfer: toTransfer(settledNetAum), billable,
+  }
 }
 
 const fmt = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

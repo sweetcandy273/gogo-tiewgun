@@ -57,10 +57,12 @@ onBeforeUnmount(() => unsub?.())
 const cm = computed(() => clothesMoney(clothes.value))
 const unpriced = computed(() => clothes.value.filter((c) => c.price == null).length)
 const billableSorted = computed(() => [...cm.value.billable].sort((a, b) => Number(a.settled) - Number(b.settled)))
-const combined = computed(() => toTransfer(summary.value.netAum + cm.value.netAum))
-const part = (net: number) => {
+const clothesOn = computed(() => clothesReady.value && dbFeatures.clothMoney)
+const combined = computed(() => toTransfer(summary.value.netAum + (clothesOn.value ? cm.value.netAum : 0)))
+const combinedPaid = computed(() => toTransfer(summary.value.settledNetAum + (clothesOn.value ? cm.value.settledNetAum : 0)))
+const fmtT = (net: number, none: string) => {
   const t = toTransfer(net)
-  return t ? `${PEOPLE[t.from]} → ${PEOPLE[t.to]} ${baht(t.satang)}` : 'ไม่มีค้าง'
+  return t ? `${PEOPLE[t.from]} → ${PEOPLE[t.to]} ${baht(t.satang)}` : none
 }
 
 async function toggleCloth(c: Cloth) {
@@ -152,17 +154,27 @@ function refresh() { void load(); void loadClothes() }
 
     <!-- what is still owed, both parts together -->
     <section class="card bg-navy! text-white">
-      <p class="text-xs opacity-80">ยอดค้างที่ต้องโอนตอนนี้ (รวมทริป + เสื้อผ้า)</p>
+      <p class="text-xs opacity-80">ยังค้างต้องโอน (ทริป + เสื้อผ้า)</p>
       <p v-if="combined" class="mt-1 flex items-center gap-2 text-xl font-bold">
         {{ PEOPLE[combined.from] }} <ArrowRight class="size-5" /> {{ PEOPLE[combined.to] }}
         <span class="ml-auto text-2xl">{{ baht(combined.satang) }}</span>
       </p>
-      <p v-else class="mt-1 text-xl font-bold">เคลียร์กันหมดแล้ว 🎉</p>
-      <div class="mt-2 space-y-0.5 text-xs opacity-85">
-        <p>· ค่าใช้จ่ายในทริป: {{ part(summary.netAum) }}</p>
-        <p v-if="clothesReady && dbFeatures.clothMoney">· ค่าเสื้อผ้า: {{ part(cm.netAum) }}</p>
+      <p v-else class="mt-1 text-xl font-bold">ไม่มียอดค้าง 🎉</p>
+
+      <div class="mt-3 flex items-center justify-between rounded-xl bg-white/10 px-3 py-2">
+        <span class="text-xs opacity-85">โอนกันแล้ว</span>
+        <span v-if="combinedPaid" class="text-sm font-bold text-emerald-300">{{ PEOPLE[combinedPaid.from] }} → {{ PEOPLE[combinedPaid.to] }} {{ baht(combinedPaid.satang) }}</span>
+        <span v-else class="text-sm opacity-70">ยังไม่มี</span>
       </div>
-      <p class="mt-2 text-[0.7rem] opacity-70">ติ๊ก ✓ ที่รายการ = จ่ายคืน/เคลียร์กันแล้ว → ไม่นับในยอดค้าง</p>
+
+      <table class="mt-3 w-full text-xs">
+        <thead class="opacity-70"><tr><th class="pb-1 text-left font-normal"></th><th class="pb-1 text-right font-normal">ยังค้าง</th><th class="pb-1 text-right font-normal">โอนแล้ว</th></tr></thead>
+        <tbody class="opacity-90">
+          <tr><td class="py-0.5">ในทริป</td><td class="text-right">{{ fmtT(summary.netAum, '—') }}</td><td class="text-right text-emerald-300">{{ fmtT(summary.settledNetAum, '—') }}</td></tr>
+          <tr v-if="clothesOn"><td class="py-0.5">เสื้อผ้า</td><td class="text-right">{{ fmtT(cm.netAum, '—') }}</td><td class="text-right text-emerald-300">{{ fmtT(cm.settledNetAum, '—') }}</td></tr>
+        </tbody>
+      </table>
+      <p class="mt-2 text-[0.7rem] opacity-70">โอนคืนรายการไหนแล้ว ให้ติ๊ก ✓ ที่รายการนั้น → ย้ายจาก "ยังค้าง" ไป "โอนแล้ว"</p>
     </section>
 
     <div class="grid grid-cols-2 gap-1 rounded-2xl bg-white p-1 ring-1 ring-black/5">
@@ -176,12 +188,20 @@ function refresh() { void load(); void loadClothes() }
         <div class="card col-span-2 !p-3">
           <p class="text-xs text-mute">ค่าใช้จ่ายในทริปทั้งหมด</p>
           <p class="text-2xl font-bold text-navy">{{ baht(summary.totalSatang) }}</p>
-          <p class="text-xs text-mute">เฉลี่ยคนละ {{ baht(Math.round(summary.totalSatang / 2)) }}
-            <template v-if="summary.settledCount"> · เคลียร์แล้ว {{ summary.settledCount }} รายการ ({{ baht(summary.settledSatang) }})</template>
-          </p>
+          <p class="text-xs text-mute">เฉลี่ยคนละ {{ baht(Math.round(summary.totalSatang / 2)) }}</p>
           <p v-if="summary.unassignedCount" class="mt-1 text-xs text-amber-700">
             มี {{ summary.unassignedCount }} รายการ ({{ baht(summary.unassignedSatang) }}) ยังไม่ระบุว่าใครจ่าย — ยังไม่นับในยอดค้าง
           </p>
+        </div>
+        <div class="card !p-3">
+          <p class="text-xs text-mute">ยังค้าง</p>
+          <p class="font-bold" :class="summary.transfer ? 'text-brick' : 'text-mute'">{{ summary.transfer ? baht(summary.transfer.satang) : '฿0.00' }}</p>
+          <p v-if="summary.transfer" class="text-xs text-mute">{{ PEOPLE[summary.transfer.from] }} → {{ PEOPLE[summary.transfer.to] }}</p>
+        </div>
+        <div class="card !p-3">
+          <p class="text-xs text-mute">โอนแล้ว</p>
+          <p class="font-bold text-emerald-700">{{ summary.settledTransfer ? baht(summary.settledTransfer.satang) : '฿0.00' }}</p>
+          <p v-if="summary.settledTransfer" class="text-xs text-mute">{{ PEOPLE[summary.settledTransfer.from] }} → {{ PEOPLE[summary.settledTransfer.to] }} · {{ summary.settledCount }} รายการ</p>
         </div>
         <div v-for="(n, p) in PEOPLE" :key="p" class="card !p-3">
           <p class="text-xs text-mute">{{ n }} จ่ายไป</p>
@@ -253,7 +273,19 @@ function refresh() { void load(); void loadClothes() }
           </div>
           <div class="card !p-3"><p class="text-xs text-mute">ของอุ้ม</p><p class="font-bold">{{ baht(cm.byOwner.aum) }}</p></div>
           <div class="card !p-3"><p class="text-xs text-mute">ของทิว</p><p class="font-bold">{{ baht(cm.byOwner.tiw) }}</p></div>
-          <div class="card !p-3"><p class="text-xs text-mute">โอนแล้ว</p><p class="font-bold text-emerald-700">{{ baht(cm.settledSatang) }}</p></div>
+          <div class="card !p-3"><p class="text-xs text-mute">ยอดรวม</p><p class="font-bold">{{ baht(cm.byOwner.aum + cm.byOwner.tiw) }}</p></div>
+          <div class="card col-span-3 grid grid-cols-2 gap-2 !p-3">
+            <div>
+              <p class="text-xs text-mute">ยังค้าง</p>
+              <p class="font-bold" :class="cm.transfer ? 'text-brick' : 'text-mute'">{{ cm.transfer ? baht(cm.transfer.satang) : '฿0.00' }}</p>
+              <p v-if="cm.transfer" class="text-xs text-mute">{{ PEOPLE[cm.transfer.from] }} → {{ PEOPLE[cm.transfer.to] }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">โอนแล้ว</p>
+              <p class="font-bold text-emerald-700">{{ cm.settledTransfer ? baht(cm.settledTransfer.satang) : '฿0.00' }}</p>
+              <p v-if="cm.settledTransfer" class="text-xs text-mute">{{ PEOPLE[cm.settledTransfer.from] }} → {{ PEOPLE[cm.settledTransfer.to] }}</p>
+            </div>
+          </div>
         </section>
 
         <section>
