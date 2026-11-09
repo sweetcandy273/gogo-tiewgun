@@ -1,20 +1,31 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { ArrowRight, Check, Pencil, Plus, RefreshCw } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { ArrowRight, Check, Pencil, Plus, RefreshCw, Shirt } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import ExpenseForm from '../../components/ExpenseForm.vue'
 import TripForm from '../../components/TripForm.vue'
 import { showToast } from '../../lib/copy'
-import { dbFeatures, errMessage, repo } from '../../lib/repo'
-import { baht, toSatang } from '../../lib/settle'
+import { dbFeatures, errMessage, isMissingSchema, repo } from '../../lib/repo'
+import { baht, clothesMoney, toSatang, toTransfer } from '../../lib/settle'
 import { useTrip } from '../../lib/tripContext'
-import { CATEGORIES, PEOPLE, SPLITS, sym, type Category, type Expense, type ExpenseInput, type TripInput } from '../../lib/types'
+import { CATEGORIES, KINDS, PEOPLE, SPLITS, sym, type Category, type Cloth, type Expense, type ExpenseInput, type TripInput } from '../../lib/types'
 import { useExpenses } from '../../lib/useExpenses'
 
-const { trip } = useTrip()
+const { trip, base } = useTrip()
 const { items, loading, error, summary, load, create, update, remove, setRate } = useExpenses(trip)
 const router = useRouter()
+
+type Tab = 'trip' | 'clothes'
+const TAB_KEY = 'gogo-expense-tab'
+function readTab(): Tab {
+  try { return localStorage.getItem(TAB_KEY) === 'clothes' ? 'clothes' : 'trip' } catch { return 'trip' }
+}
+const tab = ref<Tab>(readTab())
+function setTab(t: Tab) {
+  tab.value = t
+  try { localStorage.setItem(TAB_KEY, t) } catch { /* ignore */ }
+}
 
 const editing = ref<Expense | null>(null)
 const formOpen = ref(false)
@@ -24,6 +35,46 @@ const rateInput = ref('')
 const rateOpen = ref(false)
 const isLocal = computed(() => trip.value.currency !== 'THB')
 
+// ---- clothes money ----
+const clothes = ref<Cloth[]>([])
+const clothesReady = ref(true)
+let cseq = 0
+async function loadClothes() {
+  const my = ++cseq
+  try {
+    const c = await repo.listClothes(trip.value.id)
+    if (my === cseq) { clothes.value = c; clothesReady.value = true }
+  } catch (e) {
+    if (my !== cseq) return
+    if (isMissingSchema(e)) clothesReady.value = false
+    else error.value = errMessage(e)
+  }
+}
+let unsub: (() => void) | null = null
+onMounted(() => { void loadClothes(); unsub = repo.subscribe(() => { void loadClothes() }) })
+onBeforeUnmount(() => unsub?.())
+
+const cm = computed(() => clothesMoney(clothes.value))
+const unpriced = computed(() => clothes.value.filter((c) => c.price == null).length)
+const billableSorted = computed(() => [...cm.value.billable].sort((a, b) => Number(a.settled) - Number(b.settled)))
+const combined = computed(() => toTransfer(summary.value.netAum + cm.value.netAum))
+const part = (net: number) => {
+  const t = toTransfer(net)
+  return t ? `${PEOPLE[t.from]} → ${PEOPLE[t.to]} ${baht(t.satang)}` : 'ไม่มีค้าง'
+}
+
+async function toggleCloth(c: Cloth) {
+  try {
+    const { id, ...rest } = c
+    await repo.updateCloth(id, { ...rest, settled: !c.settled })
+    showToast(c.settled ? 'ย้ายกลับเป็นยังค้าง' : 'ติ๊กว่าโอนแล้ว')
+    await loadClothes()
+  } catch (e) {
+    error.value = errMessage(e)
+  }
+}
+
+// ---- trip expenses ----
 const filtered = computed(() => filter.value === 'all' ? items.value : items.value.filter((e) => e.category === filter.value))
 const groups = computed(() => {
   const m = new Map<string, Expense[]>()
@@ -33,10 +84,10 @@ const groups = computed(() => {
 const dateFmt = new Intl.DateTimeFormat('th-TH', { weekday: 'short', day: 'numeric', month: 'short' })
 const showDate = (d: string) => dateFmt.format(new Date(d + 'T00:00:00'))
 
-async function togglePaid(e: Expense) {
+async function toggleSettled(e: Expense) {
   const { id, created_at: _c, updated_at: _u, ...rest } = e
-  const ok = await update(id, { ...rest, is_paid: !e.is_paid })
-  if (ok) showToast(e.is_paid ? 'ย้ายไปรอจ่าย' : 'ติ๊กจ่ายแล้ว')
+  const ok = await update(id, { ...rest, settled: !e.settled })
+  if (ok) showToast(e.settled ? 'ย้ายกลับเป็นยังค้าง' : 'ติ๊กว่าเคลียร์แล้ว')
 }
 
 function openNew() { editing.value = null; formOpen.value = true }
@@ -76,6 +127,7 @@ async function removeTrip() {
     error.value = errMessage(e)
   }
 }
+function refresh() { void load(); void loadClothes() }
 </script>
 
 <template>
@@ -85,7 +137,7 @@ async function removeTrip() {
         1 {{ trip.currency }} = ฿{{ trip.rate_to_thb }}
       </button>
       <span v-if="isLocal">·</span>
-      <button class="flex items-center gap-1" @click="load()"><RefreshCw class="size-3.5" /> รีเฟรช</button>
+      <button class="flex items-center gap-1" @click="refresh"><RefreshCw class="size-3.5" /> รีเฟรช</button>
       <span>·</span>
       <button class="flex items-center gap-1" @click="tripFormOpen = true"><Pencil class="size-3.5" /> แก้ไขทริป</button>
     </div>
@@ -98,81 +150,145 @@ async function removeTrip() {
   <div class="space-y-4 px-4">
     <p v-if="error" class="rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800">{{ error }}</p>
 
-    <section class="grid grid-cols-2 gap-2">
-      <div class="card col-span-2 bg-navy! text-white">
-        <p class="text-xs opacity-80">รวมทั้งหมด</p>
-        <p class="text-3xl font-bold">{{ baht(summary.totalSatang) }}</p>
-        <p class="mt-1 text-xs opacity-80">เฉลี่ยคนละ {{ baht(Math.round(summary.totalSatang / 2)) }}</p>
-        <p v-if="summary.unpaidCount" class="mt-1 text-xs text-amber-200">รอจ่ายอีก {{ summary.unpaidCount }} รายการ · {{ baht(summary.unpaidSatang) }} (ยังไม่นับ)</p>
+    <!-- what is still owed, both parts together -->
+    <section class="card bg-navy! text-white">
+      <p class="text-xs opacity-80">ยอดค้างที่ต้องโอนตอนนี้ (รวมทริป + เสื้อผ้า)</p>
+      <p v-if="combined" class="mt-1 flex items-center gap-2 text-xl font-bold">
+        {{ PEOPLE[combined.from] }} <ArrowRight class="size-5" /> {{ PEOPLE[combined.to] }}
+        <span class="ml-auto text-2xl">{{ baht(combined.satang) }}</span>
+      </p>
+      <p v-else class="mt-1 text-xl font-bold">เคลียร์กันหมดแล้ว 🎉</p>
+      <div class="mt-2 space-y-0.5 text-xs opacity-85">
+        <p>· ค่าใช้จ่ายในทริป: {{ part(summary.netAum) }}</p>
+        <p v-if="clothesReady && dbFeatures.clothMoney">· ค่าเสื้อผ้า: {{ part(cm.netAum) }}</p>
       </div>
-      <div v-for="(n, p) in PEOPLE" :key="p" class="card !p-3">
-        <p class="text-xs text-mute">{{ n }} จ่ายไป</p>
-        <p class="text-lg font-bold">{{ baht(summary.paid[p]) }}</p>
-        <p class="text-xs text-mute">ส่วนของ{{ n }} {{ baht(summary.share[p]) }}</p>
-      </div>
-      <div class="card col-span-2 !p-3">
-        <p v-if="summary.transfer" class="flex items-center gap-2 font-semibold">
-          {{ PEOPLE[summary.transfer.from] }} <ArrowRight class="size-4 text-brick" /> {{ PEOPLE[summary.transfer.to] }}
-          <span class="ml-auto text-lg text-brick">{{ baht(summary.transfer.satang) }}</span>
-        </p>
-        <p v-else class="font-semibold text-emerald-700">เคลียร์กันพอดี ไม่ต้องโอน 🎉</p>
-        <p v-if="summary.unassignedCount" class="mt-1 text-xs text-amber-700">
-          มี {{ summary.unassignedCount }} รายการ ({{ baht(summary.unassignedSatang) }}) ยังไม่ระบุว่าใครจ่าย — ยังไม่นับในยอดโอน
-        </p>
-      </div>
+      <p class="mt-2 text-[0.7rem] opacity-70">ติ๊ก ✓ ที่รายการ = จ่ายคืน/เคลียร์กันแล้ว → ไม่นับในยอดค้าง</p>
     </section>
 
-    <section v-if="summary.totalSatang" class="card !p-3">
-      <div class="flex h-2.5 overflow-hidden rounded-full bg-sand">
-        <div v-for="(c, k) in CATEGORIES" :key="k" :style="{ width: (summary.byCategory[k] / summary.totalSatang * 100) + '%', background: c.color }" />
-      </div>
-      <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
-        <span v-for="(c, k) in CATEGORIES" v-show="summary.byCategory[k]" :key="k" class="flex items-center gap-1">
-          <i class="inline-block size-2 rounded-full" :style="{ background: c.color }" /> {{ c.label }} {{ baht(summary.byCategory[k]) }}
-        </span>
-      </div>
-    </section>
-
-    <div class="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1">
-      <button class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1" :class="filter === 'all' ? 'bg-ink text-white ring-transparent' : 'bg-white ring-black/10'" @click="filter = 'all'">ทั้งหมด</button>
-      <button v-for="(c, k) in CATEGORIES" :key="k" class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1"
-        :class="filter === k ? 'text-white ring-transparent' : 'bg-white ring-black/10'" :style="filter === k ? { background: c.color } : {}" @click="filter = k">{{ c.label }}</button>
+    <div class="grid grid-cols-2 gap-1 rounded-2xl bg-white p-1 ring-1 ring-black/5">
+      <button class="rounded-xl py-2 text-sm font-semibold" :class="tab === 'trip' ? 'bg-sea text-white' : 'text-mute'" @click="setTab('trip')">ในทริป</button>
+      <button class="rounded-xl py-2 text-sm font-semibold" :class="tab === 'clothes' ? 'bg-sea text-white' : 'text-mute'" @click="setTab('clothes')">เสื้อผ้า</button>
     </div>
 
-    <p v-if="loading" class="py-8 text-center text-sm text-mute">กำลังโหลด…</p>
-    <p v-else-if="!filtered.length" class="py-8 text-center text-sm text-mute">ยังไม่มีรายการ กด + เพื่อเพิ่ม</p>
-    <section v-for="[d, list] in groups" :key="d">
-      <h3 class="mb-1.5 text-xs font-semibold text-mute">{{ showDate(d) }}</h3>
-      <div class="card divide-y divide-black/5 !p-0">
-        <div v-for="e in list" :key="e.id" class="flex w-full items-center gap-2 py-1 pr-3.5 pl-1.5" :class="e.is_paid ? '' : 'bg-amber-50/70'">
-          <button v-if="dbFeatures.isPaid" class="grid size-10 shrink-0 place-items-center" :aria-label="e.is_paid ? 'จ่ายแล้ว แตะเพื่อเปลี่ยนเป็นยังไม่จ่าย' : 'ยังไม่จ่าย แตะเพื่อติ๊กจ่ายแล้ว'" @click="togglePaid(e)">
-            <span class="grid size-6 place-items-center rounded-md ring-2" :class="e.is_paid ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white ring-black/25'">
-              <Check v-if="e.is_paid" class="size-4" />
-            </span>
-          </button>
-          <button class="flex min-w-0 flex-1 items-center gap-3 py-2 text-left active:opacity-70" @click="openEdit(e)">
-          <i class="size-2.5 shrink-0 rounded-full" :style="{ background: CATEGORIES[e.category].color }" />
-          <span class="min-w-0 flex-1">
-            <span class="block truncate font-medium">{{ e.title }}</span>
-            <span class="block truncate text-xs text-mute">
-              {{ e.paid_by ? PEOPLE[e.paid_by] + 'จ่าย' : 'ยังไม่ระบุคนจ่าย' }} · {{ SPLITS[e.split] }}<template v-if="e.note"> · {{ e.note }}</template>
-            </span>
-          </span>
-          <span class="shrink-0 text-right">
-            <span class="block font-semibold">{{ sym(e.currency) }}{{ e.amount.toLocaleString('th-TH', { maximumFractionDigits: 2 }) }}</span>
-            <span v-if="e.currency !== 'THB'" class="block text-xs text-mute">{{ baht(toSatang(e, trip.rate_to_thb)) }}</span>
-            <span v-if="!e.is_paid" class="block text-[0.65rem] font-semibold text-amber-700">รอจ่าย</span>
-          </span>
-          </button>
+    <!-- ===== trip expenses ===== -->
+    <template v-if="tab === 'trip'">
+      <section class="grid grid-cols-2 gap-2">
+        <div class="card col-span-2 !p-3">
+          <p class="text-xs text-mute">ค่าใช้จ่ายในทริปทั้งหมด</p>
+          <p class="text-2xl font-bold text-navy">{{ baht(summary.totalSatang) }}</p>
+          <p class="text-xs text-mute">เฉลี่ยคนละ {{ baht(Math.round(summary.totalSatang / 2)) }}
+            <template v-if="summary.settledCount"> · เคลียร์แล้ว {{ summary.settledCount }} รายการ ({{ baht(summary.settledSatang) }})</template>
+          </p>
+          <p v-if="summary.unassignedCount" class="mt-1 text-xs text-amber-700">
+            มี {{ summary.unassignedCount }} รายการ ({{ baht(summary.unassignedSatang) }}) ยังไม่ระบุว่าใครจ่าย — ยังไม่นับในยอดค้าง
+          </p>
         </div>
+        <div v-for="(n, p) in PEOPLE" :key="p" class="card !p-3">
+          <p class="text-xs text-mute">{{ n }} จ่ายไป</p>
+          <p class="text-lg font-bold">{{ baht(summary.paid[p]) }}</p>
+          <p class="text-xs text-mute">ส่วนของ{{ n }} {{ baht(summary.share[p]) }}</p>
+        </div>
+      </section>
+
+      <section v-if="summary.totalSatang" class="card !p-3">
+        <div class="flex h-2.5 overflow-hidden rounded-full bg-sand">
+          <div v-for="(c, k) in CATEGORIES" :key="k" :style="{ width: (summary.byCategory[k] / summary.totalSatang * 100) + '%', background: c.color }" />
+        </div>
+        <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
+          <span v-for="(c, k) in CATEGORIES" v-show="summary.byCategory[k]" :key="k" class="flex items-center gap-1">
+            <i class="inline-block size-2 rounded-full" :style="{ background: c.color }" /> {{ c.label }} {{ baht(summary.byCategory[k]) }}
+          </span>
+        </div>
+      </section>
+
+      <div class="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1">
+        <button class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1" :class="filter === 'all' ? 'bg-ink text-white ring-transparent' : 'bg-white ring-black/10'" @click="filter = 'all'">ทั้งหมด</button>
+        <button v-for="(c, k) in CATEGORIES" :key="k" class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1"
+          :class="filter === k ? 'text-white ring-transparent' : 'bg-white ring-black/10'" :style="filter === k ? { background: c.color } : {}" @click="filter = k">{{ c.label }}</button>
       </div>
-    </section>
+
+      <p v-if="loading" class="py-8 text-center text-sm text-mute">กำลังโหลด…</p>
+      <p v-else-if="!filtered.length" class="py-8 text-center text-sm text-mute">ยังไม่มีรายการ กด + เพื่อเพิ่ม</p>
+      <section v-for="[d, list] in groups" :key="d">
+        <h3 class="mb-1.5 text-xs font-semibold text-mute">{{ showDate(d) }}</h3>
+        <div class="card divide-y divide-black/5 !p-0">
+          <div v-for="e in list" :key="e.id" class="flex w-full items-center gap-2 py-1 pr-3.5 pl-1.5" :class="e.settled ? 'opacity-60' : ''">
+            <button v-if="dbFeatures.settled" class="grid size-10 shrink-0 place-items-center"
+              :aria-label="e.settled ? 'เคลียร์แล้ว แตะเพื่อเปลี่ยนเป็นยังค้าง' : 'ยังค้าง แตะเพื่อติ๊กว่าเคลียร์แล้ว'" @click="toggleSettled(e)">
+              <span class="grid size-6 place-items-center rounded-md ring-2" :class="e.settled ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white ring-black/25'">
+                <Check v-if="e.settled" class="size-4" />
+              </span>
+            </button>
+            <button class="flex min-w-0 flex-1 items-center gap-3 py-2 text-left active:opacity-70" @click="openEdit(e)">
+              <i class="size-2.5 shrink-0 rounded-full" :style="{ background: CATEGORIES[e.category].color }" />
+              <span class="min-w-0 flex-1">
+                <span class="block truncate font-medium" :class="e.settled ? 'line-through' : ''">{{ e.title }}</span>
+                <span class="block truncate text-xs text-mute">
+                  {{ e.paid_by ? PEOPLE[e.paid_by] + 'จ่าย' : 'ยังไม่ระบุคนจ่าย' }} · {{ SPLITS[e.split] }}<template v-if="e.note"> · {{ e.note }}</template>
+                </span>
+              </span>
+              <span class="shrink-0 text-right">
+                <span class="block font-semibold">{{ sym(e.currency) }}{{ e.amount.toLocaleString('th-TH', { maximumFractionDigits: 2 }) }}</span>
+                <span v-if="e.currency !== 'THB'" class="block text-xs text-mute">{{ baht(toSatang(e, trip.rate_to_thb)) }}</span>
+                <span v-if="e.settled" class="block text-[0.65rem] font-semibold text-emerald-700">เคลียร์แล้ว</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <!-- ===== clothes ===== -->
+    <template v-else>
+      <p v-if="!clothesReady || !dbFeatures.clothMoney" class="card text-sm text-mute">
+        ค่าเสื้อผ้ายังไม่พร้อม — ต้องรัน SQL อัปเดตฐานข้อมูลก่อน
+      </p>
+      <template v-else>
+        <section class="grid grid-cols-3 gap-2">
+          <div class="card col-span-3 !p-3">
+            <p class="text-xs text-mute">ค่าเสื้อผ้าทั้งหมด (รวมค่าส่ง)</p>
+            <p class="text-2xl font-bold text-navy">{{ baht(cm.totalSatang) }}</p>
+            <p v-if="unpriced" class="text-xs text-amber-700">ยังไม่ใส่ราคา {{ unpriced }} ชิ้น</p>
+            <p v-if="cm.unassignedCount" class="text-xs text-amber-700">ยังไม่ระบุเจ้าของ {{ cm.unassignedCount }} ชิ้น ({{ baht(cm.byOwner.none) }}) — ยังไม่นับในยอดค้าง</p>
+          </div>
+          <div class="card !p-3"><p class="text-xs text-mute">ของอุ้ม</p><p class="font-bold">{{ baht(cm.byOwner.aum) }}</p></div>
+          <div class="card !p-3"><p class="text-xs text-mute">ของทิว</p><p class="font-bold">{{ baht(cm.byOwner.tiw) }}</p></div>
+          <div class="card !p-3"><p class="text-xs text-mute">โอนแล้ว</p><p class="font-bold text-emerald-700">{{ baht(cm.settledSatang) }}</p></div>
+        </section>
+
+        <section>
+          <div class="mb-1.5 flex items-end justify-between">
+            <h3 class="text-sm font-bold">รายการที่ต้องจ่ายคืนคนซื้อ</h3>
+            <RouterLink :to="`${base}/outfits`" class="flex items-center gap-1 text-xs text-sea"><Shirt class="size-3.5" /> แก้ราคา/เจ้าของ</RouterLink>
+          </div>
+          <p v-if="!cm.billable.length" class="card text-center text-sm text-mute">ไม่มีเสื้อผ้าที่ซื้อให้อีกคน</p>
+          <div v-else class="card divide-y divide-black/5 !p-0">
+            <div v-for="c in billableSorted" :key="c.id" class="flex items-center gap-2 py-1 pr-3.5 pl-1.5" :class="c.settled ? 'opacity-60' : ''">
+              <button class="grid size-10 shrink-0 place-items-center" :aria-label="c.settled ? 'โอนแล้ว แตะเพื่อเปลี่ยนเป็นยังค้าง' : 'ยังค้าง แตะเพื่อติ๊กว่าโอนแล้ว'" @click="toggleCloth(c)">
+                <span class="grid size-6 place-items-center rounded-md ring-2" :class="c.settled ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white ring-black/25'">
+                  <Check v-if="c.settled" class="size-4" />
+                </span>
+              </button>
+              <span class="grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-sand">
+                <img v-if="c.photo_url" :src="c.photo_url" alt="" class="size-full object-cover" loading="lazy" />
+                <span v-else>{{ KINDS[c.kind].emoji }}</span>
+              </span>
+              <span class="min-w-0 flex-1 py-2">
+                <span class="block truncate text-sm font-medium" :class="c.settled ? 'line-through' : ''">{{ c.name }}</span>
+                <span class="block text-xs text-mute">ของ{{ PEOPLE[c.owner!] }} · {{ PEOPLE[c.paid_by] }}จ่าย</span>
+              </span>
+              <span class="shrink-0 text-sm font-semibold">{{ baht(Math.round((c.price ?? 0) * 100)) }}</span>
+            </div>
+          </div>
+        </section>
+      </template>
+    </template>
   </div>
 
-  <button class="fixed right-5 bottom-24 z-30 grid size-14 place-items-center rounded-full bg-brick text-white shadow-lg active:scale-95" aria-label="เพิ่มรายการ" @click="openNew">
+  <button v-if="tab === 'trip'" class="fixed right-5 bottom-24 z-30 grid size-14 place-items-center rounded-full bg-brick text-white shadow-lg active:scale-95" aria-label="เพิ่มรายการ" @click="openNew">
     <Plus class="size-7" />
   </button>
 
-  <ExpenseForm v-if="formOpen" :expense="editing" :rate="trip.rate_to_thb" :local-currency="trip.currency" :show-paid="dbFeatures.isPaid" @save="onSave" @remove="onRemove" @close="formOpen = false" />
+  <ExpenseForm v-if="formOpen" :expense="editing" :rate="trip.rate_to_thb" :local-currency="trip.currency" :show-settled="dbFeatures.settled" @save="onSave" @remove="onRemove" @close="formOpen = false" />
   <TripForm v-if="tripFormOpen" :trip="trip" @save="saveTrip" @remove="removeTrip" @close="tripFormOpen = false" />
 </template>

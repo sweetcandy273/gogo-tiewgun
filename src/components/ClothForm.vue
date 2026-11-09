@@ -11,9 +11,12 @@ export interface ClothFormResult {
   note: string | null
   photo: Blob | null // new photo to upload, if any
   clearPhoto: boolean
+  price: number | null
+  paid_by: Person
+  settled: boolean
 }
 
-const props = defineProps<{ cloth: Cloth | null; defaultOwner: Person | null; busy: boolean }>()
+const props = defineProps<{ cloth: Cloth | null; defaultOwner: Person | null; busy: boolean; showMoney?: boolean }>()
 const emit = defineEmits<{ save: [r: ClothFormResult]; remove: []; close: [] }>()
 
 const f = reactive({
@@ -21,6 +24,9 @@ const f = reactive({
   owner: (props.cloth?.owner ?? props.defaultOwner ?? '') as Person | '',
   kind: (props.cloth?.kind ?? 'top') as ClothKind,
   note: props.cloth?.note ?? '',
+  price: props.cloth?.price != null ? String(props.cloth.price) : '',
+  paid_by: (props.cloth?.paid_by ?? 'aum') as Person,
+  settled: props.cloth?.settled ?? false,
 })
 const photo = ref<Blob | null>(null)
 const preview = ref<string | null>(props.cloth?.photo_url ?? null)
@@ -62,6 +68,7 @@ const errors = computed(() => {
   const e: string[] = []
   if (!f.name.trim() || f.name.length > 120) e.push('ใส่ชื่อเสื้อผ้า (ไม่เกิน 120 ตัวอักษร)')
   if (f.note.length > 300) e.push('หมายเหตุยาวเกินไป')
+  if (f.price.trim() && (!Number.isFinite(Number(f.price)) || Number(f.price) < 0 || Number(f.price) >= 1_000_000)) e.push('ราคาไม่ถูกต้อง')
   return e
 })
 
@@ -70,6 +77,7 @@ function submit() {
   if (errors.value.length || processing.value || props.busy) return
   emit('save', {
     name: f.name.trim(), owner: f.owner || null, kind: f.kind, note: f.note.trim() || null,
+    price: f.price.trim() ? Math.round(Number(f.price) * 100) / 100 : null, paid_by: f.paid_by, settled: f.settled,
     photo: photo.value, clearPhoto: clearPhoto.value,
   })
 }
@@ -119,6 +127,23 @@ function submit() {
               {{ k.emoji }} {{ k.label }}
             </button>
           </div>
+        </div>
+
+        <div v-if="showMoney !== false" class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="label" for="cprice">ราคา (฿ รวมค่าส่ง)</label>
+            <input id="cprice" v-model="f.price" class="field" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div>
+            <label class="label" for="cpaid">ใครจ่าย</label>
+            <select id="cpaid" v-model="f.paid_by" class="field">
+              <option v-for="(n, k) in PEOPLE" :key="k" :value="k">{{ n }}</option>
+            </select>
+          </div>
+          <label v-if="f.owner && f.owner !== f.paid_by" class="col-span-2 flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
+            <input v-model="f.settled" type="checkbox" class="size-5 accent-[#1b4965]" />
+            <span class="text-sm">{{ PEOPLE[f.owner] }}โอนคืน{{ PEOPLE[f.paid_by] }}แล้ว</span>
+          </label>
         </div>
 
         <div>

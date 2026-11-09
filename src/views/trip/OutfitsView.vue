@@ -119,7 +119,7 @@ async function saveCloth(r: ClothFormResult) {
       photo_url = null
       photo_path = null
     }
-    const input = { trip_id: trip.value.id, name: r.name, owner: r.owner, kind: r.kind, note: r.note, photo_url, photo_path }
+    const input = { trip_id: trip.value.id, name: r.name, owner: r.owner, kind: r.kind, note: r.note, photo_url, photo_path, price: r.price, paid_by: r.paid_by, settled: r.settled }
     if (old) await repo.updateCloth(old.id, input)
     else await repo.createCloth(input)
     // old file no longer referenced → clean up (best effort)
@@ -232,6 +232,7 @@ async function removeCloth() {
             <span v-if="!c.owner" class="absolute top-1 left-1 rounded bg-amber-100 px-1 text-[0.6rem] font-semibold text-amber-800">ยังไม่ระบุ</span>
           </div>
           <p class="mt-1 line-clamp-2 px-0.5 text-xs leading-snug">{{ c.name }}</p>
+          <p v-if="c.price != null" class="px-0.5 text-[0.65rem] font-semibold">฿{{ c.price.toLocaleString('th-TH', { maximumFractionDigits: 2 }) }}</p>
           <p class="px-0.5 text-[0.65rem]" :class="wornLabel(c) ? 'text-sea' : 'text-mute'">{{ wornLabel(c) ? `ใส่วันที่ ${wornLabel(c)}` : 'ยังไม่ได้ใส่' }}</p>
         </button>
       </div>
@@ -267,5 +268,5 @@ async function removeCloth() {
     </div>
   </div>
 
-  <ClothForm v-if="formOpen" :cloth="editing" :default-owner="person" :busy="busy" @save="saveCloth" @remove="removeCloth" @close="formOpen = false" />
+  <ClothForm v-if="formOpen" :cloth="editing" :default-owner="person" :busy="busy" :show-money="dbFeatures.clothMoney" @save="saveCloth" @remove="removeCloth" @close="formOpen = false" />
 </template>

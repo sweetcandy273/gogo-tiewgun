@@ -24,8 +24,8 @@ export interface Expense {
   paid_by: Person | null
   split: Split
   note: string | null
-  /** false = planned / not paid yet (default true) */
-  is_paid: boolean
+  /** true = cleared between the two (paid back) — no longer counted as owed */
+  settled: boolean
   created_at?: string
   updated_at?: string
 }
@@ -74,6 +74,12 @@ export interface Cloth {
   photo_url: string | null
   photo_path: string | null
   note: string | null
+  /** THB incl. shipping; null = not entered */
+  price: number | null
+  /** who paid for it (default aum) */
+  paid_by: Person
+  /** owner paid the payer back */
+  settled: boolean
 }
 export type ClothInput = Omit<Cloth, 'id'>
 

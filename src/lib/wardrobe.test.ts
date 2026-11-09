@@ -3,7 +3,7 @@ import { daysByCloth, outfitFor, tripDays, wardrobeStats } from './wardrobe'
 import type { Cloth, OutfitPick } from './types'
 
 const c = (id: string, owner: Cloth['owner'], kind: Cloth['kind']): Cloth => ({
-  id, trip_id: 't', owner, name: id, kind, photo_url: null, photo_path: null, note: null,
+  id, trip_id: 't', owner, name: id, kind, photo_url: null, photo_path: null, note: null, price: null, paid_by: 'aum', settled: false,
 })
 const p = (day: string, cloth_id: string): OutfitPick => ({ trip_id: 't', day, cloth_id })
 

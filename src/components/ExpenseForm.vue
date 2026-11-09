@@ -4,7 +4,7 @@ import { X } from 'lucide-vue-next'
 import { CATEGORIES, CURRENCIES, PEOPLE, SPLITS, type Category, type Expense, type ExpenseInput, type Person, type Split } from '../lib/types'
 
 type Input = Omit<ExpenseInput, 'trip_id'>
-const props = defineProps<{ expense: Expense | null; rate: number; localCurrency: string; showPaid?: boolean }>()
+const props = defineProps<{ expense: Expense | null; rate: number; localCurrency: string; showSettled?: boolean }>()
 const emit = defineEmits<{ save: [input: Input]; remove: []; close: [] }>()
 const currencies = props.localCurrency === 'THB' ? ['THB'] : [props.localCurrency, 'THB']
 
@@ -22,7 +22,7 @@ const f = reactive({
   paid_by: (props.expense?.paid_by ?? '') as Person | '',
   split: (props.expense?.split ?? 'half') as Split,
   note: props.expense?.note ?? '',
-  is_paid: props.expense?.is_paid ?? true,
+  settled: props.expense?.settled ?? false,
 })
 const confirmDelete = ref(false)
 const touched = ref(false)
@@ -54,7 +54,7 @@ function submit() {
     paid_by: f.paid_by || null,
     split: f.split,
     note: f.note.trim() || null,
-    is_paid: f.is_paid,
+    settled: f.settled,
   })
 }
 </script>
@@ -121,10 +121,10 @@ function submit() {
           </div>
         </div>
 
-        <label v-if="showPaid !== false" class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
-          <input v-model="f.is_paid" type="checkbox" class="size-5 accent-[#1b4965]" />
-          <span class="text-sm font-medium">จ่ายแล้ว</span>
-          <span class="ml-auto text-xs text-mute">{{ f.is_paid ? 'นับในยอดรวมและยอดโอน' : 'ยังไม่จ่าย · เก็บไว้เป็นรายการรอจ่าย' }}</span>
+        <label v-if="showSettled !== false" class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
+          <input v-model="f.settled" type="checkbox" class="size-5 accent-[#1b4965]" />
+          <span class="text-sm font-medium">จ่ายแล้ว / เคลียร์กันแล้ว</span>
+          <span class="ml-auto text-right text-xs text-mute">{{ f.settled ? 'ไม่นับในยอดค้าง' : 'ยังค้าง · นับในยอดที่ต้องโอน' }}</span>
         </label>
 
         <div>

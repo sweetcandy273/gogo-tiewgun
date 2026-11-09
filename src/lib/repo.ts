@@ -30,7 +30,7 @@ const TRIP_COLS = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
 const EXP_COLS_BASE = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,created_at,updated_at'
 
 /** Which optional DB migrations are applied (detected at runtime so the app keeps working before SQL is run). */
-export const dbFeatures = reactive({ isPaid: true, outfits: true })
+export const dbFeatures = reactive({ settled: true, outfits: true, clothMoney: true })
 
 /** Postgres/PostgREST "column or table does not exist" style errors. */
 export function isMissingSchema(err: unknown): boolean {
@@ -41,8 +41,14 @@ export function isMissingSchema(err: unknown): boolean {
 }
 
 const toTrip = (r: Record<string, unknown>): Trip => ({ ...(r as unknown as Trip), rate_to_thb: Number(r.rate_to_thb) })
-const CLOTH_COLS = 'id,trip_id,owner,name,kind,photo_url,photo_path,note'
-const toExpense = (r: Record<string, unknown>): Expense => ({ ...(r as unknown as Expense), amount: Number(r.amount), is_paid: r.is_paid !== false })
+const CLOTH_COLS_BASE = 'id,trip_id,owner,name,kind,photo_url,photo_path,note'
+const toExpense = (r: Record<string, unknown>): Expense => ({ ...(r as unknown as Expense), amount: Number(r.amount), settled: r.settled === true })
+const toCloth = (r: Record<string, unknown>): Cloth => ({
+  ...(r as unknown as Cloth),
+  price: r.price == null ? null : Number(r.price),
+  paid_by: r.paid_by === 'tiw' ? 'tiw' : 'aum',
+  settled: r.settled === true,
+})
 
 class SupabaseRepo implements Repo {
   private get db() {
@@ -76,19 +82,19 @@ class SupabaseRepo implements Repo {
     if (error) throw error
   }
 
-  private get expCols() { return dbFeatures.isPaid ? EXP_COLS_BASE + ',is_paid' : EXP_COLS_BASE }
+  private get expCols() { return dbFeatures.settled ? EXP_COLS_BASE + ',settled' : EXP_COLS_BASE }
   private expRow(input: ExpenseInput): Partial<ExpenseInput> {
-    if (dbFeatures.isPaid) return input
-    const { is_paid: _ignored, ...rest } = input
+    if (dbFeatures.settled) return input
+    const { settled: _ignored, ...rest } = input
     return rest
   }
-  /** run once; if the is_paid column is missing, switch it off and retry without it */
+  /** run once; if the settled column is missing, switch it off and retry without it */
   private async withIsPaidFallback<T>(fn: () => Promise<T>): Promise<T> {
     try {
       return await fn()
     } catch (e) {
-      if (dbFeatures.isPaid && isMissingSchema(e)) {
-        dbFeatures.isPaid = false
+      if (dbFeatures.settled && isMissingSchema(e)) {
+        dbFeatures.settled = false
         return fn()
       }
       throw e
@@ -122,21 +128,47 @@ class SupabaseRepo implements Repo {
     if (error) throw error
   }
 
+  private get clothCols() { return dbFeatures.clothMoney ? CLOTH_COLS_BASE + ',price,paid_by,settled' : CLOTH_COLS_BASE }
+  private clothRow(input: ClothInput): Partial<ClothInput> {
+    if (dbFeatures.clothMoney) return input
+    const { price: _p, paid_by: _b, settled: _s, ...rest } = input
+    return rest
+  }
+  private async withClothFallback<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn()
+    } catch (e) {
+      // only fall back when the base table exists but the money columns don't
+      if (dbFeatures.clothMoney && isMissingSchema(e) && /price|paid_by|settled/.test((e as { message?: string }).message ?? '')) {
+        dbFeatures.clothMoney = false
+        return fn()
+      }
+      throw e
+    }
+  }
+
   async listClothes(tripId: string) {
-    const { data, error } = await this.db.from('clothes').select(CLOTH_COLS).eq('trip_id', tripId)
+    return this.withClothFallback(() => this._listClothes(tripId))
+  }
+  private async _listClothes(tripId: string) {
+    const { data, error } = await this.db.from('clothes').select(this.clothCols).eq('trip_id', tripId)
       .order('created_at', { ascending: true })
     if (error) throw error
-    return (data ?? []) as Cloth[]
+    return ((data ?? []) as unknown as Record<string, unknown>[]).map(toCloth)
   }
   async createCloth(input: ClothInput) {
-    const { data, error } = await this.db.from('clothes').insert(input).select(CLOTH_COLS).single()
-    if (error) throw error
-    return data as Cloth
+    return this.withClothFallback(async () => {
+      const { data, error } = await this.db.from('clothes').insert(this.clothRow(input)).select(this.clothCols).single()
+      if (error) throw error
+      return toCloth(data as unknown as Record<string, unknown>)
+    })
   }
   async updateCloth(id: string, input: ClothInput) {
-    const { data, error } = await this.db.from('clothes').update(input).eq('id', id).select(CLOTH_COLS).single()
-    if (error) throw error
-    return data as Cloth
+    return this.withClothFallback(async () => {
+      const { data, error } = await this.db.from('clothes').update(this.clothRow(input)).eq('id', id).select(this.clothCols).single()
+      if (error) throw error
+      return toCloth(data as unknown as Record<string, unknown>)
+    })
   }
   async removeCloth(c: Cloth) {
     const { error } = await this.db.from('clothes').delete().eq('id', c.id)
@@ -228,7 +260,7 @@ class LocalRepo implements Repo {
   }
 
   async listExpenses(tripId: string) {
-    return this.expenses().filter((e) => e.trip_id === tripId).map((e) => ({ ...e, is_paid: e.is_paid !== false }))
+    return this.expenses().filter((e) => e.trip_id === tripId).map((e) => ({ ...e, settled: e.settled === true }))
       .sort((a, b) => (b.spent_on + (b.created_at ?? '')).localeCompare(a.spent_on + (a.created_at ?? '')))
   }
   async createExpense(input: ExpenseInput) {
@@ -250,7 +282,10 @@ class LocalRepo implements Repo {
   }
   private clothes(): Cloth[] { return this.read<Cloth>('gogo-demo-clothes', []) }
   private picks(): OutfitPick[] { return this.read<OutfitPick>('gogo-demo-picks', []) }
-  async listClothes(tripId: string) { return this.clothes().filter((c) => c.trip_id === tripId) }
+  async listClothes(tripId: string) {
+    return this.clothes().filter((c) => c.trip_id === tripId)
+      .map((c) => ({ ...c, price: c.price ?? null, paid_by: c.paid_by ?? 'aum', settled: c.settled === true }))
+  }
   async createCloth(input: ClothInput) {
     const c: Cloth = { ...input, id: crypto.randomUUID() }
     this.write('gogo-demo-clothes', [...this.clothes(), c])
