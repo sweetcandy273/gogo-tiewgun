@@ -49,6 +49,7 @@ create table if not exists public.expenses (
   paid_by     text check (paid_by in ('aum','tiw')),          -- null = not set yet
   split       text not null default 'half' check (split in ('half','aum','tiw')),
   note        text check (note is null or char_length(note) <= 500),
+  is_paid     boolean not null default true,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );

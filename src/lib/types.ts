@@ -24,6 +24,8 @@ export interface Expense {
   paid_by: Person | null
   split: Split
   note: string | null
+  /** false = planned / not paid yet (default true) */
+  is_paid: boolean
   created_at?: string
   updated_at?: string
 }
@@ -60,3 +62,32 @@ export const CURRENCIES: Record<string, { symbol: string; name: string }> = {
   GBP: { symbol: '£', name: 'ปอนด์' },
 }
 export const sym = (c: string) => CURRENCIES[c]?.symbol ?? c + ' '
+
+export type ClothKind = 'inner' | 'top' | 'outer' | 'bottom' | 'shoes' | 'accessory'
+
+export interface Cloth {
+  id: string
+  trip_id: string
+  owner: Person | null
+  name: string
+  kind: ClothKind
+  photo_url: string | null
+  photo_path: string | null
+  note: string | null
+}
+export type ClothInput = Omit<Cloth, 'id'>
+
+export interface OutfitPick {
+  trip_id: string
+  day: string // YYYY-MM-DD
+  cloth_id: string
+}
+
+export const KINDS: Record<ClothKind, { label: string; emoji: string }> = {
+  outer: { label: 'ตัวนอก', emoji: '🧥' },
+  top: { label: 'เสื้อ', emoji: '👕' },
+  inner: { label: 'ชั้นใน/ฮีท', emoji: '🧦' },
+  bottom: { label: 'กางเกง/ล่าง', emoji: '👖' },
+  shoes: { label: 'รองเท้า', emoji: '👟' },
+  accessory: { label: 'ของใช้/อื่น ๆ', emoji: '🧣' },
+}

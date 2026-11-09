@@ -3,7 +3,7 @@ import { settle, toSatang } from './settle'
 import type { Expense } from './types'
 
 const base: Omit<Expense, 'id' | 'amount' | 'currency' | 'paid_by' | 'split'> = {
-  trip_id: 't1', spent_on: '2027-01-15', category: 'food', title: 'x', note: null,
+  trip_id: 't1', spent_on: '2027-01-15', category: 'food', title: 'x', note: null, is_paid: true,
 }
 let n = 0
 const ex = (p: Partial<Expense>): Expense => ({
@@ -59,6 +59,11 @@ describe('settle', () => {
       items: [ex({ amount: 500, paid_by: null }), ex({ amount: 100, paid_by: 'aum' })], rate: 4.6,
       want: { from: 'tiw', to: 'aum', satang: 5000 }, total: 60000, unassigned: 50000,
     },
+    {
+      name: 'unpaid (planned) item excluded from total and transfer',
+      items: [ex({ amount: 569, paid_by: 'aum', is_paid: false }), ex({ amount: 100, paid_by: 'aum' })], rate: 4.6,
+      want: { from: 'tiw', to: 'aum', satang: 5000 }, total: 10000,
+    },
   ]
   for (const c of cases) {
     it(c.name, () => {
@@ -70,4 +75,8 @@ describe('settle', () => {
       expect(got.share.aum + got.share.tiw).toBe(got.paid.aum + got.paid.tiw)
     })
   }
+  it('counts unpaid separately', () => {
+    const got = settle([ex({ amount: 569, is_paid: false }), ex({ amount: 1, is_paid: false })], 4.6)
+    expect([got.unpaidSatang, got.unpaidCount, got.totalSatang]).toEqual([57000, 2, 0])
+  })
 })

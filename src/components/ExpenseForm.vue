@@ -22,6 +22,7 @@ const f = reactive({
   paid_by: (props.expense?.paid_by ?? '') as Person | '',
   split: (props.expense?.split ?? 'half') as Split,
   note: props.expense?.note ?? '',
+  is_paid: props.expense?.is_paid ?? true,
 })
 const confirmDelete = ref(false)
 const touched = ref(false)
@@ -53,6 +54,7 @@ function submit() {
     paid_by: f.paid_by || null,
     split: f.split,
     note: f.note.trim() || null,
+    is_paid: f.is_paid,
   })
 }
 </script>
@@ -118,6 +120,12 @@ function submit() {
               :class="f.split === k ? 'bg-sea text-white ring-transparent' : 'bg-white ring-black/10'" @click="f.split = k">{{ s }}</button>
           </div>
         </div>
+
+        <label class="flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 ring-1 ring-black/10">
+          <input v-model="f.is_paid" type="checkbox" class="size-5 accent-[#1b4965]" />
+          <span class="text-sm font-medium">จ่ายแล้ว</span>
+          <span class="ml-auto text-xs text-mute">{{ f.is_paid ? 'นับในยอดรวมและยอดโอน' : 'ยังไม่จ่าย · เก็บไว้เป็นรายการรอจ่าย' }}</span>
+        </label>
 
         <div>
           <label class="label" for="n">หมายเหตุ</label>

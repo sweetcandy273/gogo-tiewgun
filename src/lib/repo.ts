@@ -1,6 +1,6 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { supabase } from './supabase'
-import type { Expense, ExpenseInput, Trip, TripInput } from './types'
+import type { Cloth, ClothInput, Expense, ExpenseInput, OutfitPick, Trip, TripInput } from './types'
 
 export interface Repo {
   listTrips(): Promise<Trip[]>
@@ -12,15 +12,25 @@ export interface Repo {
   createExpense(input: ExpenseInput): Promise<Expense>
   updateExpense(id: string, input: ExpenseInput): Promise<Expense>
   removeExpense(id: string): Promise<void>
+  listClothes(tripId: string): Promise<Cloth[]>
+  createCloth(input: ClothInput): Promise<Cloth>
+  updateCloth(id: string, input: ClothInput): Promise<Cloth>
+  removeCloth(c: Cloth): Promise<void>
+  uploadPhoto(tripId: string, blob: Blob): Promise<{ url: string; path: string }>
+  removePhoto(path: string): Promise<void>
+  listPicks(tripId: string): Promise<OutfitPick[]>
+  /** replace the picks of `day` among `scope` clothes (one person's) with `selected` */
+  setPicks(tripId: string, day: string, scope: string[], selected: string[]): Promise<void>
   /** calls onChange when data changes on another device; returns unsubscribe */
   subscribe(onChange: () => void): () => void
 }
 
 const TRIP_COLS = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
-const EXP_COLS = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,created_at,updated_at'
+const EXP_COLS = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,is_paid,created_at,updated_at'
 
 const toTrip = (r: Record<string, unknown>): Trip => ({ ...(r as unknown as Trip), rate_to_thb: Number(r.rate_to_thb) })
-const toExpense = (r: Record<string, unknown>): Expense => ({ ...(r as unknown as Expense), amount: Number(r.amount) })
+const CLOTH_COLS = 'id,trip_id,owner,name,kind,photo_url,photo_path,note'
+const toExpense = (r: Record<string, unknown>): Expense => ({ ...(r as unknown as Expense), amount: Number(r.amount), is_paid: r.is_paid !== false })
 
 class SupabaseRepo implements Repo {
   private get db() {
@@ -75,11 +85,62 @@ class SupabaseRepo implements Repo {
     if (error) throw error
   }
 
+  async listClothes(tripId: string) {
+    const { data, error } = await this.db.from('clothes').select(CLOTH_COLS).eq('trip_id', tripId)
+      .order('created_at', { ascending: true })
+    if (error) throw error
+    return (data ?? []) as Cloth[]
+  }
+  async createCloth(input: ClothInput) {
+    const { data, error } = await this.db.from('clothes').insert(input).select(CLOTH_COLS).single()
+    if (error) throw error
+    return data as Cloth
+  }
+  async updateCloth(id: string, input: ClothInput) {
+    const { data, error } = await this.db.from('clothes').update(input).eq('id', id).select(CLOTH_COLS).single()
+    if (error) throw error
+    return data as Cloth
+  }
+  async removeCloth(c: Cloth) {
+    const { error } = await this.db.from('clothes').delete().eq('id', c.id)
+    if (error) throw error
+    if (c.photo_path) await this.removePhoto(c.photo_path).catch(() => { /* orphan file is harmless */ })
+  }
+  async uploadPhoto(tripId: string, blob: Blob) {
+    const path = `${tripId}/${crypto.randomUUID()}.jpg`
+    const { error } = await this.db.storage.from('clothes').upload(path, blob, { contentType: 'image/jpeg', upsert: false })
+    if (error) throw error
+    const { data } = this.db.storage.from('clothes').getPublicUrl(path)
+    return { url: data.publicUrl, path }
+  }
+  async removePhoto(path: string) {
+    const { error } = await this.db.storage.from('clothes').remove([path])
+    if (error) throw error
+  }
+  async listPicks(tripId: string) {
+    const { data, error } = await this.db.from('outfit_picks').select('trip_id,day,cloth_id').eq('trip_id', tripId)
+    if (error) throw error
+    return (data ?? []) as OutfitPick[]
+  }
+  async setPicks(tripId: string, day: string, scope: string[], selected: string[]) {
+    if (scope.length) {
+      const { error } = await this.db.from('outfit_picks').delete().eq('trip_id', tripId).eq('day', day).in('cloth_id', scope)
+      if (error) throw error
+    }
+    if (selected.length) {
+      const rows = selected.map((cloth_id) => ({ trip_id: tripId, day, cloth_id }))
+      const { error } = await this.db.from('outfit_picks').upsert(rows, { onConflict: 'day,cloth_id' })
+      if (error) throw error
+    }
+  }
+
   subscribe(onChange: () => void): () => void {
     const ch: RealtimeChannel = this.db
       .channel(`gogo-${crypto.randomUUID()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses' }, onChange)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'trips' }, onChange)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clothes' }, onChange)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'outfit_picks' }, onChange)
       .subscribe()
     return () => { void this.db.removeChannel(ch) }
   }
@@ -130,7 +191,7 @@ class LocalRepo implements Repo {
   }
 
   async listExpenses(tripId: string) {
-    return this.expenses().filter((e) => e.trip_id === tripId)
+    return this.expenses().filter((e) => e.trip_id === tripId).map((e) => ({ ...e, is_paid: e.is_paid !== false }))
       .sort((a, b) => (b.spent_on + (b.created_at ?? '')).localeCompare(a.spent_on + (a.created_at ?? '')))
   }
   async createExpense(input: ExpenseInput) {
@@ -149,6 +210,43 @@ class LocalRepo implements Repo {
   }
   async removeExpense(id: string) {
     this.write('gogo-demo-expenses', this.expenses().filter((x) => x.id !== id))
+  }
+  private clothes(): Cloth[] { return this.read<Cloth>('gogo-demo-clothes', []) }
+  private picks(): OutfitPick[] { return this.read<OutfitPick>('gogo-demo-picks', []) }
+  async listClothes(tripId: string) { return this.clothes().filter((c) => c.trip_id === tripId) }
+  async createCloth(input: ClothInput) {
+    const c: Cloth = { ...input, id: crypto.randomUUID() }
+    this.write('gogo-demo-clothes', [...this.clothes(), c])
+    return c
+  }
+  async updateCloth(id: string, input: ClothInput) {
+    const all = this.clothes()
+    const i = all.findIndex((c) => c.id === id)
+    if (i < 0) throw new Error('ไม่พบเสื้อผ้าชิ้นนี้')
+    all[i] = { ...all[i], ...input }
+    this.write('gogo-demo-clothes', all)
+    return all[i]
+  }
+  async removeCloth(c: Cloth) {
+    this.write('gogo-demo-clothes', this.clothes().filter((x) => x.id !== c.id))
+    this.write('gogo-demo-picks', this.picks().filter((p) => p.cloth_id !== c.id))
+  }
+  async uploadPhoto(_tripId: string, blob: Blob) {
+    // demo: keep the (already compressed) image inline
+    const url = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader()
+      r.onload = () => resolve(String(r.result))
+      r.onerror = () => reject(r.error ?? new Error('อ่านรูปไม่ได้'))
+      r.readAsDataURL(blob)
+    })
+    return { url, path: '' }
+  }
+  async removePhoto() {}
+  async listPicks(tripId: string) { return this.picks().filter((p) => p.trip_id === tripId) }
+  async setPicks(tripId: string, day: string, scope: string[], selected: string[]) {
+    const drop = new Set(scope)
+    const keep = this.picks().filter((p) => !(p.trip_id === tripId && p.day === day && drop.has(p.cloth_id)))
+    this.write('gogo-demo-picks', [...keep, ...selected.map((cloth_id) => ({ trip_id: tripId, day, cloth_id }))])
   }
   subscribe() { return () => {} }
 }

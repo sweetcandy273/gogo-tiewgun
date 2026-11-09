@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ArrowRight, Pencil, Plus, RefreshCw } from 'lucide-vue-next'
+import { ArrowRight, Check, Pencil, Plus, RefreshCw } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import ExpenseForm from '../../components/ExpenseForm.vue'
 import TripForm from '../../components/TripForm.vue'
@@ -32,6 +32,12 @@ const groups = computed(() => {
 })
 const dateFmt = new Intl.DateTimeFormat('th-TH', { weekday: 'short', day: 'numeric', month: 'short' })
 const showDate = (d: string) => dateFmt.format(new Date(d + 'T00:00:00'))
+
+async function togglePaid(e: Expense) {
+  const { id, created_at: _c, updated_at: _u, ...rest } = e
+  const ok = await update(id, { ...rest, is_paid: !e.is_paid })
+  if (ok) showToast(e.is_paid ? 'ย้ายไปรอจ่าย' : 'ติ๊กจ่ายแล้ว')
+}
 
 function openNew() { editing.value = null; formOpen.value = true }
 function openEdit(e: Expense) { editing.value = e; formOpen.value = true }
@@ -97,6 +103,7 @@ async function removeTrip() {
         <p class="text-xs opacity-80">รวมทั้งหมด</p>
         <p class="text-3xl font-bold">{{ baht(summary.totalSatang) }}</p>
         <p class="mt-1 text-xs opacity-80">เฉลี่ยคนละ {{ baht(Math.round(summary.totalSatang / 2)) }}</p>
+        <p v-if="summary.unpaidCount" class="mt-1 text-xs text-amber-200">รอจ่ายอีก {{ summary.unpaidCount }} รายการ · {{ baht(summary.unpaidSatang) }} (ยังไม่นับ)</p>
       </div>
       <div v-for="(n, p) in PEOPLE" :key="p" class="card !p-3">
         <p class="text-xs text-mute">{{ n }} จ่ายไป</p>
@@ -137,7 +144,13 @@ async function removeTrip() {
     <section v-for="[d, list] in groups" :key="d">
       <h3 class="mb-1.5 text-xs font-semibold text-mute">{{ showDate(d) }}</h3>
       <div class="card divide-y divide-black/5 !p-0">
-        <button v-for="e in list" :key="e.id" class="flex w-full items-center gap-3 px-3.5 py-3 text-left active:bg-black/5" @click="openEdit(e)">
+        <div v-for="e in list" :key="e.id" class="flex w-full items-center gap-2 py-1 pr-3.5 pl-1.5" :class="e.is_paid ? '' : 'bg-amber-50/70'">
+          <button class="grid size-10 shrink-0 place-items-center" :aria-label="e.is_paid ? 'จ่ายแล้ว แตะเพื่อเปลี่ยนเป็นยังไม่จ่าย' : 'ยังไม่จ่าย แตะเพื่อติ๊กจ่ายแล้ว'" @click="togglePaid(e)">
+            <span class="grid size-6 place-items-center rounded-md ring-2" :class="e.is_paid ? 'bg-emerald-600 text-white ring-emerald-600' : 'bg-white ring-black/25'">
+              <Check v-if="e.is_paid" class="size-4" />
+            </span>
+          </button>
+          <button class="flex min-w-0 flex-1 items-center gap-3 py-2 text-left active:opacity-70" @click="openEdit(e)">
           <i class="size-2.5 shrink-0 rounded-full" :style="{ background: CATEGORIES[e.category].color }" />
           <span class="min-w-0 flex-1">
             <span class="block truncate font-medium">{{ e.title }}</span>
@@ -148,8 +161,10 @@ async function removeTrip() {
           <span class="shrink-0 text-right">
             <span class="block font-semibold">{{ sym(e.currency) }}{{ e.amount.toLocaleString('th-TH', { maximumFractionDigits: 2 }) }}</span>
             <span v-if="e.currency !== 'THB'" class="block text-xs text-mute">{{ baht(toSatang(e, trip.rate_to_thb)) }}</span>
+            <span v-if="!e.is_paid" class="block text-[0.65rem] font-semibold text-amber-700">รอจ่าย</span>
           </span>
-        </button>
+          </button>
+        </div>
       </div>
     </section>
   </div>

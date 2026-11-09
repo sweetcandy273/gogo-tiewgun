@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ChevronRight, Phone, Plane, Wallet } from 'lucide-vue-next'
 import { copyText } from '../../lib/copy'
+import ZhText from '../../components/ZhText.vue'
 import { useTrip } from '../../lib/tripContext'
 
 const { trip, guide, base } = useTrip()
@@ -80,7 +81,7 @@ const countdown = computed(() => {
               <p class="text-xs font-semibold text-brick">{{ h.city }}</p>
               <h3 class="font-bold">{{ h.name }}</h3>
               <button class="zh-chip text-left text-sm" @click="copyText(h.zh)">{{ h.zh }}</button>
-              <p class="text-sm text-mute">{{ h.address }}</p>
+              <p class="text-sm text-mute"><ZhText :text="h.address" /></p>
               <p class="text-xs text-mute">{{ h.note }}</p>
               <div class="flex flex-wrap gap-2 pt-1">
                 <a v-for="p in h.phones" :key="p" :href="`tel:${p.replace(/[^+\d]/g, '')}`" class="btn-ghost !py-1.5 text-xs">
@@ -90,7 +91,7 @@ const countdown = computed(() => {
             </div>
           </article>
         </div>
-        <p class="mt-2 text-xs text-mute">แตะชื่อภาษาจีนเพื่อคัดลอกไปค้นในแผนที่</p>
+        <p class="mt-2 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) ตรงไหนก็ได้เพื่อคัดลอกไปค้นใน Amap</p>
       </section>
     </template>
   </div>

@@ -18,6 +18,9 @@ export interface Settlement {
   /** expenses whose payer is not set yet — excluded from paid/share */
   unassignedSatang: number
   unassignedCount: number
+  /** expenses not paid yet (planned) — excluded from total/paid/share */
+  unpaidSatang: number
+  unpaidCount: number
   /** who owes whom; null when even */
   transfer: { from: Person; to: Person; satang: number } | null
   byCategory: Record<Category, number>
@@ -32,9 +35,16 @@ export function settle(expenses: readonly Expense[], rateToThb: number): Settlem
   let total = 0
   let unassigned = 0
   let unassignedCount = 0
+  let unpaid = 0
+  let unpaidCount = 0
 
   for (const e of expenses) {
     const s = toSatang(e, rateToThb)
+    if (e.is_paid === false) {
+      unpaid += s
+      unpaidCount++
+      continue
+    }
     total += s
     byCategory[e.category] = (byCategory[e.category] ?? 0) + s
 
@@ -61,7 +71,7 @@ export function settle(expenses: readonly Expense[], rateToThb: number): Settlem
   if (netAum > 0) transfer = { from: 'tiw', to: 'aum', satang: netAum }
   else if (netAum < 0) transfer = { from: 'aum', to: 'tiw', satang: -netAum }
 
-  return { totalSatang: total, paid, share, unassignedSatang: unassigned, unassignedCount, transfer, byCategory }
+  return { totalSatang: total, paid, share, unassignedSatang: unassigned, unassignedCount, unpaidSatang: unpaid, unpaidCount, transfer, byCategory }
 }
 
 const fmt = new Intl.NumberFormat('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

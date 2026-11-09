@@ -21,7 +21,7 @@ const day = computed(() => days[idx.value])
   <div v-else @click="onZhClick">
     <PageHeader :kicker="day.label" :title="day.title" :sub="day.transport" :accent="day.accent" />
     <div class="px-4">
-      <p class="mb-3 text-xs text-mute">แตะตัวอักษรจีนที่มีพื้นสีฟ้าเพื่อคัดลอก</p>
+      <p class="mb-3 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) เพื่อคัดลอกไปค้นใน Amap</p>
 
       <ol class="relative space-y-3 border-l-2 pl-5" :style="{ borderColor: day.accent + '55' }">
         <li v-for="(it, i) in day.items" :key="i" class="relative">
