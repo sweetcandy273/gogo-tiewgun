@@ -1,0 +1,62 @@
+export type Person = 'aum' | 'tiw'
+export type Split = 'half' | Person
+export type Category = 'booking' | 'transport' | 'food' | 'ticket' | 'shopping' | 'other'
+
+export interface Trip {
+  id: string
+  slug: string
+  name: string
+  start_date: string | null
+  end_date: string | null
+  currency: string // local currency, ISO 4217
+  rate_to_thb: number
+}
+export type TripInput = Omit<Trip, 'id'>
+
+export interface Expense {
+  id: string
+  trip_id: string
+  spent_on: string // YYYY-MM-DD
+  category: Category
+  title: string
+  currency: string // 'THB' or the trip's local currency
+  amount: number
+  paid_by: Person | null
+  split: Split
+  note: string | null
+  created_at?: string
+  updated_at?: string
+}
+export type ExpenseInput = Omit<Expense, 'id' | 'created_at' | 'updated_at'>
+
+export const PEOPLE: Record<Person, string> = { aum: 'อุ้ม', tiw: 'ทิว' }
+
+export const CATEGORIES: Record<Category, { label: string; color: string }> = {
+  booking: { label: 'ตั๋ว/ที่พัก', color: '#1B4965' },
+  transport: { label: 'เดินทาง', color: '#2F7FB3' },
+  food: { label: 'อาหาร/เครื่องดื่ม', color: '#B5533C' },
+  ticket: { label: 'ค่าเข้าชม', color: '#7A8B3C' },
+  shopping: { label: 'ช้อปปิ้ง/ของฝาก', color: '#A07A4F' },
+  other: { label: 'อื่น ๆ', color: '#5B6B78' },
+}
+
+export const SPLITS: Record<Split, string> = {
+  half: 'หาร 2',
+  aum: 'ของอุ้มคนเดียว',
+  tiw: 'ของทิวคนเดียว',
+}
+
+export const CURRENCIES: Record<string, { symbol: string; name: string }> = {
+  THB: { symbol: '฿', name: 'บาท' },
+  CNY: { symbol: '¥', name: 'หยวน' },
+  JPY: { symbol: '¥', name: 'เยน' },
+  KRW: { symbol: '₩', name: 'วอน' },
+  TWD: { symbol: 'NT$', name: 'ดอลลาร์ไต้หวัน' },
+  HKD: { symbol: 'HK$', name: 'ดอลลาร์ฮ่องกง' },
+  SGD: { symbol: 'S$', name: 'ดอลลาร์สิงคโปร์' },
+  VND: { symbol: '₫', name: 'ดอง' },
+  USD: { symbol: '$', name: 'ดอลลาร์สหรัฐ' },
+  EUR: { symbol: '€', name: 'ยูโร' },
+  GBP: { symbol: '£', name: 'ปอนด์' },
+}
+export const sym = (c: string) => CURRENCIES[c]?.symbol ?? c + ' '

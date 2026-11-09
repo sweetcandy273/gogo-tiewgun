@@ -1,0 +1,913 @@
+{
+ "days": [
+  {
+   "label": "DAY 1",
+   "title": "พุธ 13 ม.ค. · ภูเก็ต → กวางโจว",
+   "transport": "ค้าง Naiya Hotel (人和)",
+   "accent": "#5B6B78",
+   "items": [
+    {
+     "time": "~14:30",
+     "title": "ถึงสนามบินภูเก็ต · เช็กอิน CZ6064",
+     "body": "กระเป๋าโหลด<b>ส่งต่อถึง TAO ไม่ต้องรับที่กวางโจว</b> <span class=\"tag tag-ok\">ตามรายละเอียดสายการบิน</span> · ขอบอร์ดดิ้งพาสให้ครบทั้ง 2 ขา (HKT→CAN และ CAN→TAO) และดูป้ายกระเป๋าว่าเขียนปลายทาง TAO · คืนนี้ใช้แค่กระเป๋าถือ",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "17:25",
+     "title": "บิน CZ6064 → CAN T2 (ถึง 22:15)",
+     "body": "เตรียมพาสปอร์ต (เหลือ ≥ 6 เดือน) · ใบจองโรงแรม/ตั๋วขากลับแบบดิจิทัล · บัตรขาเข้าดิจิทัลตามประกาศทางการล่าสุด · ไม่ต้องขอวีซ่าสำหรับพำนัก ≤ 30 วัน <span class=\"tag tag-chk\">เช็กประกาศทางการก่อนบิน</span>",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~22:45",
+     "title": "ผ่าน ตม. → ออกชั้นขาเข้า",
+     "body": "ส่งข้อความหาโรงแรมซ้ำ: “ลงเครื่องแล้ว ถึงชั้นขาเข้า ~23:00 คนขับรออยู่ตรงไหน” (รถต้องจองล่วงหน้า 1 ชม. จึงควร<b>แจ้งล่วงหน้าตั้งแต่ก่อนเดินทาง</b> และย้ำอีกครั้งตอนเครื่องลงจอด)",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "ok",
+       "text": "รถฟรี 24 ชม."
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "~23:30–00:00",
+     "title": "ถึง Naiya Hotel (5.7 กม.)",
+     "body": "ห้องจองคืนวันที่ 13 เช็กอินได้ตั้งแต่ 08:00 จึงเข้าดึกได้ · ขอห้องปลอดบุหรี่/เงียบสงบ (ส่งคำขอไว้แล้ว) · ถามโรงแรมเรื่อง<b>ฝากสัมภาระตอนเช้า</b> ก่อนเข้านอน",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "est",
+       "text": "เวลาประมาณ"
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "~23:30",
+     "title": "หาอะไรรองท้องก่อนนอน",
+     "body": "บน CZ6064 มีอาหารแล้ว ดึกนี้แค่ของรองท้อง · ร้านเปิดดึกที่ T2 ขาเข้าและแถวโรงแรมยังไม่ยืนยัน → เปิด Amap ค้น <span class=\"zh\">便利店</span> (ร้านสะดวกซื้อ) หรือ <span class=\"zh\">24小时</span> ใกล้ Naiya <span class=\"tag tag-chk\">เช็กใน Amap</span> · ถามหน้าโรงแรม: <span class=\"zh\">附近有24小时便利店吗？</span> (แถวนี้มีร้านสะดวกซื้อ 24 ชม. ไหม)<br/><b>ชัวร์สุด: พกของแห้งจากไทยในกระเป๋าถือ</b> เช่น ขนมปัง แครกเกอร์ ถั่ว · <b>ห้ามมีเนื้อสัตว์</b> (หมูแผ่น ไส้กรอก แหนม ฯลฯ) ศุลกากรจีนห้ามนำเข้า",
+     "zh": [
+      "便利店",
+      "24小时",
+      "附近有24小时便利店吗？"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "→ 07:30",
+     "title": "นอนพัก ~7 ชม.",
+     "body": "โรงแรมไม่มีอาหารเช้า — มื้อเช้าไปกินแถวสถานี 人和 (ดูวันพฤหัส)",
+     "zh": [],
+     "tags": [],
+     "minor": true
+    }
+   ],
+   "cards": [
+    {
+     "title": "ส่งอีเมลได้ไหม? — ตอบตรง ๆ",
+     "body": "ผมหาอีเมลของโรงแรมไม่เจอ จึง<b>ยืนยันไม่ได้ว่าอีเมลใช้การได้</b> ช่องทางที่มีหลักฐานจริงคือ (1) ปุ่ม <b>“ส่งข้อความถึงที่พัก”</b> ในหน้าการจอง Trip.com (ข้อความถูกบันทึกไว้) และ (2) โทร <span class=\"mono\">+86-20-86030001</span> / <span class=\"mono\">+86-18124264212</span> (สำรองเท่านั้น พูดจีนไม่ได้ ให้ใช้ข้อความ/แอปแปลแทน) · ใต้บรรทัด “บริการรถรับส่ง…แบบแชร์” มีลิงก์ <b>“ดูรายละเอียด”</b> ให้กดอ่านขั้นตอนจองรถ (ผมเปิดไม่ได้จากภาพ) · เป็นรถ<b>แชร์</b> อาจรอผู้โดยสารอื่น",
+     "zh": []
+    },
+    {
+     "title": "แผนสำรองถ้ารถโรงแรมไม่มา",
+     "body": "<ul><li>Didi/แท็กซี่ระยะ 5.7 กม. — ให้คนขับเปิดมิเตอร์ ดูราคาในแอปก่อนกด <span class=\"tag tag-est\">ประมาณการ</span></li> <li>รถไฟฟ้าสาย 3 (机场北 → 人和) ขบวนสุดท้ายราว 23:00 <span class=\"tag tag-nav\">bendibao</span> → <b>น่าจะไม่ทัน</b> หลัง ตม.</li></ul>",
+     "zh": []
+    },
+    {
+     "title": "กระเป๋าถือคืนนี้",
+     "body": "<ul><li>ชุดนอน/ของใช้ 1 คืน · ที่ชาร์จ · พาสปอร์ต</li><li>เสื้อกันหนาวสำหรับชิงเต่า · ใบจองทั้งหมด</li></ul>",
+     "zh": []
+    },
+    {
+     "title": "จุดสังเกตหน้าโรงแรม",
+     "body": "ป้ายไฟ <span class=\"zh\">奈亚酒店</span> + โลโก้ NEYA เหนือทางเข้ากระจก · ตึกสีน้ำเงินเข้มแถบเหลือง<br/>ที่อยู่ No.27, Shangye 1st Street, Renhe Town",
+     "zh": [
+      "奈亚酒店"
+     ]
+    }
+   ],
+   "photos": [
+    {
+     "src": "/trips/qingdao-2027/photo-01.webp",
+     "caption": "Naiya Hotel · 奈亚酒店 (NEYA) · ภาพจากคุณ"
+    }
+   ]
+  },
+  {
+   "label": "DAY 2 · เช้า",
+   "title": "พฤหัส 14 ม.ค. · เช้ากวางโจว",
+   "transport": "人和 → เป่ยจิงลู่ → สนามบิน · รถไฟฟ้า",
+   "accent": "#5B6B78",
+   "items": [
+    {
+     "time": "08:00",
+     "title": "เช็กเอาท์ + ฝากสัมภาระ",
+     "body": "หน้า Trip.com แสดงช่วงเช็กเอาท์ <b>12:00–16:00</b> <span class=\"tag tag-ok\">ยืนยันแล้ว</span> — ขยายเวลาฟรีหรือไม่ยังไม่ชัด จึง<b>เช็กเอาท์เช้า + ฝากของ</b> (ไม่ต้องจ่ายค่าห้องเพิ่ม) · ถามว่าฝากฟรีไหมก่อนส่งของ · กระเป๋าโหลดไปถึง TAO แล้ว เหลือฝากแค่กระเป๋าถือ",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "chk",
+       "text": "ถามค่าฝาก"
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "08:15",
+     "title": "เดินไปสถานี 人和 ~1 กม. (12–15 นาที) → ตลาดเช้า/มื้อเช้า",
+     "body": "<b>ตลาดสดตรงสถานี</b> ยังไม่มีชื่อ/หมุดที่ยืนยัน <span class=\"tag tag-chk\">ต้องเช็ก</span> → ค้น Amap “人和地铁站 市场” หรือเดินดู · สำรอง: หมุดอาหารเช้าของคุณแถวสถานี<ul><li><b>Huahui Rice Roll (Renhe Railway Station Shop)</b> — Renhezhen Helong 6th Road No.270 · เฉ่งเฝิ่น <span class=\"zh\">肠粉</span></li><li><b>Gregarious Snack Shop</b> — Renhe Huacheng Road No.290</li><li><b>Banzhai Coffee (Renhe Branch)</b> — Fuhe Flower Garden No. B8 (ใกล้สถานี) · กาแฟ</li></ul>",
+     "zh": [
+      "肠粉"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "09:15",
+     "title": "รถไฟฟ้า 人和 → 公园前 (ถนนคนเดินเป่ยจิง <span class=\"zh\">北京路步行街</span>)",
+     "body": "<b>สาย 3</b> (ทาง <span class=\"zh\">体育西路</span>) 2 ป้าย → ลง <b><span class=\"zh\">嘉禾望岗</span></b> เปลี่ยน <b>สาย 2</b> (ทาง <span class=\"zh\">广州南站</span>) 11 ป้าย → ลง <b><span class=\"zh\">公园前</span></b> แล้วเดินตามป้าย <span class=\"zh\">北京路</span> · ~60–70 นาที <span class=\"tag tag-est\">ประมาณการ</span> · ค่าตั๋ว ≈¥7 (≈฿32)/คน <span class=\"tag tag-est\">ประมาณการ</span> (คิดตามระยะ ~27 กม.)<br/>ตั๋ว: ซื้อตั๋วเที่ยวเดียว <span class=\"zh\">单程票</span> ที่ตู้ในสถานี หรือใช้ <span class=\"zh\">乘车码</span> ใน Alipay <span class=\"tag tag-chk\">เช็กว่าบัญชีต่างชาติใช้ได้</span> · ไปตัวเปล่า (ฝากกระเป๋าไว้ที่โรงแรมแล้ว) ช่วงเช้าคนแน่น",
+     "zh": [
+      "北京路步行街",
+      "体育西路",
+      "嘉禾望岗",
+      "广州南站",
+      "公园前",
+      "北京路",
+      "单程票",
+      "乘车码"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~10:20",
+     "title": "เดินเล่นถนนเป่ยจิง · กินตามหมุด (~1.5 ชม.)",
+     "body": "ร้านบนถนนส่วนใหญ่เปิดสายหน่อย ตรวจเวลาในแอปก่อนไป <span class=\"tag tag-chk\">ต้องเช็ก</span><ul><li><b>Diandude (Beijing Road Er Shop)</b> <span class=\"zh\">点都德</span> — Beijing Road No.352, 354 · ติ่มซำ (<span class=\"zh\">虾饺 烧卖 叉烧包</span>)</li><li><b>CHAGEE Bawang Chaji</b> <span class=\"zh\">霸王茶姬</span> — ชานม (สาขาถนนคนเดินเป่ยจิง)</li><li><b>ManTwo Cafe</b> — Zhongshan 5th Road Changxing Street No.15 F1</li><li><b>Xu sidetrack Cafe</b> — Yuexiu Dongheng Street No.18 101</li></ul>",
+     "zh": [
+      "点都德",
+      "虾饺 烧卖 叉烧包",
+      "霸王茶姬"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "12:00",
+     "title": "รถไฟฟ้า 公园前 → 人和 · กลับรับของที่ Naiya",
+     "body": "<b>สาย 2</b> (ทาง <span class=\"zh\">嘉禾望岗</span>) ไปจนสุดสาย → เปลี่ยน <b>สาย 3</b> (ทาง <span class=\"zh\">机场北</span>) 2 ป้าย → ลง <b><span class=\"zh\">人和</span></b> → เดิน ~1 กม. ไปโรงแรม · ออกจากเป่ยจิงลู่<b>ไม่เกิน 12:00</b> · ระหว่างนั่งรถไฟ <b>ส่งข้อความขอรถรับส่ง</b> (ต้องล่วงหน้า 1 ชม.) · ถึงโรงแรม ~13:15 <span class=\"tag tag-est\">ประมาณการ</span> · รับสัมภาระ",
+     "zh": [
+      "嘉禾望岗",
+      "机场北",
+      "人和"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~13:45",
+     "title": "รถรับส่งฟรี Naiya → สนามบิน T2",
+     "body": "ระยะ 5.7 กม. ~15–20 นาที <span class=\"tag tag-est\">ประมาณการ</span> · ถ้ารถแชร์ล่าช้า ใช้ Didi สำรอง (ระยะสั้น)",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "ok",
+       "text": "ฟรี"
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "~14:30",
+     "title": "ถึง T2 · เช็กอิน CZ3609 (บิน 17:00)",
+     "body": "เผื่อเวลา ~2.5 ชม. ก่อนบิน · กระเป๋าโหลดส่งถึง TAO แล้ว ไม่ต้องโหลดใหม่ ผ่านจุดตรวจด้วยกระเป๋าถืออย่างเดียว",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    }
+   ],
+   "cards": [
+    {
+     "title": "ทางเลือก: ไม่ย้อนกลับโรงแรม",
+     "body": "ถ้ากระเป๋าถือไม่หนัก พกไปเที่ยวด้วย แล้วนั่งรถไฟฟ้าจาก 公园前 ไป T2 ตรง: สาย 2 → <span class=\"zh\">嘉禾望岗</span> → สาย 3 ลง <b><span class=\"zh\">机场北</span></b> (เลย 人和 ไป) ~70 นาที <span class=\"tag tag-est\">ประมาณการ</span> · ไม่ต้องย้อนโรงแรม ออกจากเป่ยจิงลู่ได้ช้าขึ้นถึง ~12:45 · ขึ้นกับว่าจะถือของเดินไหวไหม",
+     "zh": [
+      "嘉禾望岗",
+      "机场北"
+     ]
+    },
+    {
+     "title": "ข้อควรระวัง",
+     "body": "<ul><li>CAN T1 ปิดปรับปรุง · สถานี 机场南 รถวิ่งผ่านไม่จอด → ใช้ <b>机场北 (T2)</b> <span class=\"tag tag-ok\">ยืนยันแล้ว</span></li><li>เวลาเปิดร้าน/ตลาดช่วงเช้าเปลี่ยนได้</li><li>รถไฟฟ้าสาย 3 ส่วนเหนือเปิด 06:00 · เที่ยวสุดท้ายจาก 机场北 23:15 (ตามแหล่งข้อมูล)</li></ul>",
+     "zh": []
+    }
+   ],
+   "photos": []
+  },
+  {
+   "label": "DAY 2 · ค่ำ",
+   "title": "พฤหัส 14 ม.ค. · บินสู่ชิงเต่า",
+   "transport": "CZ3609 · 17:00 → 19:55",
+   "accent": "#5B6B78",
+   "items": [
+    {
+     "time": "~14:30",
+     "title": "ถึง T2 · เช็กอิน CZ3609",
+     "body": "กระเป๋าโหลดส่งถึง TAO แล้ว ไม่ต้องโหลดใหม่ · พาวเวอร์แบงก์ต้องมี 3C อยู่ในกระเป๋าถือ",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "17:00",
+     "title": "CZ3609 → TAO (ถึง 19:55)",
+     "body": "Trip.com ระบุเครื่อง <b>C919</b> · มีบริการอาหาร",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "ok",
+       "text": "ยืนยันแล้ว"
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "19:55",
+     "title": "ถึงชิงเต่า · รับกระเป๋า (~30 นาที)",
+     "body": "ต่อด้วยรถที่จองไว้ใน Trip.com (ดูล่าง)",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~21:30–22:00",
+     "title": "ถึง 十二山·云棠酒店 เช็กอิน",
+     "body": "เคาน์เตอร์เปิด 24 ชม. (ตามไฟล์เดิม) · ขอห้องปลอดบุหรี่/เงียบ · ของกินดึกไม่ทราบว่ามีไหม — ซื้อที่สนามบินไว้ก่อน",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "est",
+       "text": "เวลาประมาณ"
+      }
+     ],
+     "minor": false
+    }
+   ],
+   "cards": [
+    {
+     "title": "ที่อยู่โรงแรมชิงเต่า",
+     "body": "十二山·云棠酒店<br/>(青岛登州路啤酒博物馆店) 寿光路18号 (Shouguang Road No.18) +86-18561709051",
+     "zh": []
+    },
+    {
+     "title": "คัดลอกชื่อใน Amap",
+     "body": "12 Shan Yuntang Hotel (Qingdao Dengzhou Road Brewery Museum Shop)",
+     "zh": []
+    },
+    {
+     "title": "จุดสังเกต",
+     "body": "ตึกอิฐแดง 3 ชั้น ป้ายไฟ <span class=\"zh\">云棠酒店</span> + โลโก้ <span class=\"zh\">十二山</span><br/>ถนนเล็ก มีรถจอดข้างทาง<br/><span class=\"zh\">寿光路18号</span>",
+     "zh": [
+      "云棠酒店",
+      "十二山",
+      "寿光路18号"
+     ]
+    }
+   ],
+   "photos": [
+    {
+     "src": "/trips/qingdao-2027/photo-02.webp",
+     "caption": "Shiershan · Yuntang Hotel (Qingdao Dengzhou Road Beer Museum) · ภาพจากคุณ"
+    }
+   ]
+  },
+  {
+   "label": "DAY 3",
+   "title": "ศุกร์ 15 ม.ค. · เมืองเก่า",
+   "transport": "รถไฟฟ้าสาย 1 + เดินเยอะ · ใส่รองเท้ากันลื่น",
+   "accent": "#2F7FB3",
+   "items": [
+    {
+     "time": "08:45",
+     "title": "มื้อเช้า · Hangzhou Small Steamed Bun (Dengzhou Road Branch)",
+     "body": "No.59, Dengzhou Road A Unit 3 Hu · เสี่ยวหลงเปา <span class=\"zh\">小笼包</span> · หุนทุน <span class=\"zh\">馄饨</span>",
+     "zh": [
+      "小笼包",
+      "馄饨"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "09:30",
+     "title": "เดิน ~1 กม. (12–15 นาที) ไปสถานี <span class=\"zh\">台东</span> หรือ <span class=\"zh\">广饶路</span>",
+     "body": "ตามไฟล์เดิม <span class=\"tag tag-nav\">ตามไฟล์เดิม</span> · ตรวจเส้นทางเดินจริงใน Amap",
+     "zh": [
+      "台东",
+      "广饶路"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~09:50",
+     "title": "รถไฟฟ้าสาย 1 ทาง <span class=\"zh\">王家港</span> → ลง <span class=\"zh\">青岛站</span>",
+     "body": "4 ป้ายจากไถตง (3 ป้ายจากกว่างเหยาลู่) ~10 นาที · ¥3 (≈฿14) ตามไฟล์เดิม ¥2–3/เที่ยว <span class=\"tag tag-est\">ประมาณการ</span>",
+     "zh": [
+      "王家港",
+      "青岛站"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~10:15",
+     "title": "จ้านเฉียว <span class=\"zh\">栈桥</span> + หาด (45–60 นาที · ลมแรง)",
+     "body": "เดินจากสถานี 5–10 นาที · หมุด: <b>Qingdao Zhan Bridge Bathing Beach</b> (No.14, Taiping Road) · <b>Qingdao Zhanqiao Square</b> (Taiping Road) · ถ่ายรูปรองเท้ากันลื่นสำคัญ",
+     "zh": [
+      "栈桥"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "11:15",
+     "title": "พักอุ่น · Baoxiansheng Small Steamed Bun Wonton",
+     "body": "Taiping Road No.37 Huaneng Hotel F1 · เสี่ยวหลงเปา + หุนทุน",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~12:00",
+     "title": "โบสถ์เซนต์ไมเคิล <span class=\"zh\">圣弥厄尔大教堂</span> (ถ่ายภายนอก)",
+     "body": "<b>St. Michael's Cathedral of the Catholic Diocese of Qingdao</b> — 15 Zhejiang Road (<span class=\"zh\">浙江路15号</span>) · เดิน 12–15 นาทีจากร้านก่อนหน้า",
+     "zh": [
+      "圣弥厄尔大教堂",
+      "浙江路15号"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~12:30",
+     "title": "กาแฟอุ่น <b>หรือ</b> มื้อเที่ยง (เลือก 1)",
+     "body": "<ul><li><b>77 Coffee (Zhejiang Road)</b> — Zhejiang Road No.13 A · กาแฟร้อน <span class=\"zh\">热咖啡</span></li><li><b>Minguohai Seafood Dumpling Restaurant …</b> — Zhongshan Road No.31 · เกี๊ยวซีฟู้ด <span class=\"zh\">海鲜水饺</span></li><li>ใกล้กัน: <b>Jinmanwu Verte and Home-cooked Fare</b> (No.9 Zhejiang Road B)</li></ul>",
+     "zh": [
+      "热咖啡",
+      "海鲜水饺"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~14:00",
+     "title": "เดินขึ้นเนิน 10–15 นาที → ถนนการ์ตูน <span class=\"zh\">龙江路</span>",
+     "body": "หมุด: <b>Gongqijun Comic Street</b> (Longjiang Road × Huangxian Road) · ชื่อจีนให้ค้นด้วย “龙江路”",
+     "zh": [
+      "龙江路"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "14:45–15:45",
+     "title": "เวลายืดหยุ่น (ตัดรายการ “Shuanhai World” ออกแล้ว)",
+     "body": "เลือกอย่างใดอย่างหนึ่ง: นั่งพักร้านหมุดเดิม <b>Yima Laoshan Lv (Tianzhu Church Branch)</b> (Zhongshan Road No.77) · <b>k+Coffee (Zhongshan Road Branch)</b> · หรือกลับโรงแรมเร็ว <span class=\"tag tag-chk\">ยังไม่ทราบเมนู/เวลาเปิด</span>",
+     "zh": [],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~16:00",
+     "title": "กลับโรงแรม ก่อนแสงหมด (อาทิตย์ตก ~17:00)",
+     "body": "รถไฟฟ้า: เดินไป <span class=\"zh\">信号山</span> (สาย 4) → ต่อสาย 1 ที่ <span class=\"zh\">观象山</span> → ลง 广饶路/台东 → เดินหรือแท็กซี่สั้น · หรือ Didi ¥14–23 (≈฿64–106)/คัน <span class=\"tag tag-est\">ประมาณการ</span>",
+     "zh": [
+      "信号山",
+      "观象山"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~18:00",
+     "title": "มื้อเย็น · Lao Qingdao Chuozirou Seafood Snack Booth",
+     "body": "(Tsingtao No.1 Factory Shop) — Dengzhou Road 73 A · ซีฟู้ด<b>คิดเป็นชั่ง</b> ถามราคาก่อนสั่ง (ดูหน้า “คำง่าย ๆ”) · แนะนำ: หอยเป๋าฮื้อนึ่ง <span class=\"zh\">蒸鲍鱼</span> · หอยนางรมกระเทียม <span class=\"zh\">蒜蓉生蚝</span> · ปลานึ่ง <span class=\"zh\">清蒸鱼</span>",
+     "zh": [
+      "蒸鲍鱼",
+      "蒜蓉生蚝",
+      "清蒸鱼"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~19:30",
+     "title": "เดินเล่นถนนเบียร์ ถ้าไม่หนาวเกินไป",
+     "body": "<b>Qingdao Beer Street (Dengzhou Road Branch)</b> — Dengzhou Road Residential District No.56 · เบียร์สด <span class=\"zh\">鲜啤</span> · หอยลายย่าง <span class=\"zh\">烤蛤蜊</span> · หอยหลอด <span class=\"zh\">竹蛏</span> (ตามร้าน)",
+     "zh": [
+      "鲜啤",
+      "烤蛤蜊",
+      "竹蛏"
+     ],
+     "tags": [],
+     "minor": false
+    }
+   ],
+   "cards": [
+    {
+     "title": "ถ่ายภายนอก",
+     "body": "15 Zhejiang Road (<span class=\"zh\">浙江路15号</span>) · ม.ค. ต้นไม้โล่ง ท้องฟ้าอาจเทา เปิดให้เข้าด้านในหรือไม่ ยังไม่ทราบ ถามหน้าประตู",
+     "zh": [
+      "浙江路15号"
+     ]
+    }
+   ],
+   "photos": [
+    {
+     "src": "/trips/qingdao-2027/photo-03.webp",
+     "caption": "โบสถ์เซนต์ไมเคิล (圣弥厄尔大教堂) · ภาพจากคุณ ถ่ายตอนฟ้าใส"
+    }
+   ]
+  },
+  {
+   "label": "DAY 4",
+   "title": "เสาร์ 16 ม.ค. · เบียร์ ไถตง และวิวเมือง",
+   "transport": "เดิน + Line 2 / Line 4 (Qingdao Metro)",
+   "accent": "#B5533C",
+   "items": [
+    {
+     "time": "~08:30",
+     "title": "มื้อเช้าแบบคนท้องถิ่น · แผงอาหารเช้า / ร้านซาลาเปาแถวไถตง",
+     "body": "ยังไม่มีร้านที่ยืนยันได้ว่าเดินจากโรงแรมใกล้ ๆ → เปิด Amap ค้น <span class=\"zh\">早餐</span> · <span class=\"zh\">包子</span> · <span class=\"zh\">早市</span> แล้วเลือกที่เดิน ≤10–15 นาที <span class=\"tag tag-chk\">เช็กใน Amap</span><br/><b>ตลาดที่มีข้อมูล</b> (ระยะจากโรงแรมยังไม่ทราบ): <b>海泊河早市</b> (<span class=\"zh\">城运康定路农贸市场</span>) เริ่ม ~05:00 ไป 7–8 โมงของครบ · ดังเรื่อง<b>ซาลาเปาใหญ่ซานตง</b> <span class=\"zh\">大包</span> เช่น <span class=\"zh\">大虾包</span> ไส้กุ้ง · <span class=\"zh\">萝卜粉丝虾皮包</span> หัวไชเท้า-วุ้นเส้น-กุ้งแห้ง · หรือ <b><span class=\"zh\">十五大街便民摊点群</span></b> 06:00–18:00 (ข้อมูลปี 2563)<br/><b>สั่งแบบคนชิงเต่า:</b> <span class=\"zh\">甜沫</span> โจ๊กข้าวฟ่างใส่ผัก-วุ้นเส้น-ฟองเต้าหู้ เค็มเผ็ดนิด ๆ · <span class=\"zh\">油条</span>+<span class=\"zh\">豆浆</span> ปาท่องโก๋+นมถั่วเหลือง · <span class=\"zh\">馄饨</span> เกี๊ยวน้ำ · <span class=\"zh\">馅饼</span> แป้งทอดสอดไส้ · งบ ~¥10–15 (≈฿46–69)/คน <span class=\"tag tag-est\">ประมาณการ</span> · ถามเนื้อ: <span class=\"zh\">这是猪肉吗？</span><br/>สำรอง: Hangzhou Small Steamed Bun (Dengzhou Road) ร้านเดียวกับวันที่ 3 · หรือร้านสะดวกซื้อ: <span class=\"zh\">茶叶蛋</span> ไข่ต้มน้ำชา · <span class=\"zh\">包子</span> · <span class=\"zh\">豆浆</span> · ขออุ่น <span class=\"zh\">可以加热吗？</span> · กลับถึงพิพิธภัณฑ์ก่อน 10:00",
+     "zh": [
+      "早餐",
+      "包子",
+      "早市",
+      "城运康定路农贸市场",
+      "大包",
+      "大虾包",
+      "萝卜粉丝虾皮包",
+      "十五大街便民摊点群",
+      "甜沫",
+      "油条",
+      "豆浆",
+      "馄饨",
+      "馅饼",
+      "这是猪肉吗？",
+      "茶叶蛋",
+      "可以加热吗？"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "10:00",
+     "title": "พิพิธภัณฑ์เบียร์ชิงเต่า <span class=\"zh\">青岛啤酒博物馆</span>",
+     "body": "<b>Tsingtao Museum</b> — 56-1 Dengzhou Road (<span class=\"zh\">登州路56号</span>) · เดินจากโรงแรม 3–5 นาที · ตั๋ว <b>¥67 (฿308)</b>/คน <span class=\"tag tag-ok\">ราคาที่คุณเห็นใน Trip.com</span> · เปิด 08:30 ปิด 17:30–18:00 (แหล่งข้อมูลไม่ตรงกัน) <span class=\"tag tag-chk\">ตรวจก่อนไป</span> · 1.5–2 ชม.",
+     "zh": [
+      "青岛啤酒博物馆",
+      "登州路56号"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~12:30",
+     "title": "มื้อเที่ยง · Jiaodongtian Mama Baxian Steamed Bun Yujiacai (Taidong Branch)",
+     "body": "หมุดของคุณ · ร้านเกี๊ยวนึ่ง <span class=\"zh\">胶东田妈妈</span> (Tianmama) อยู่ระหว่างสถานี Taidong กับ Haixin Bridge · เดินหรือ Line 2 (Qingdao Metro) ¥2–5 <span class=\"tag tag-est\">ประมาณการ</span> · เวลาเปิดยังไม่ได้ตรวจ <span class=\"tag tag-chk\">เช็กใน Amap</span> · (Shuangheyuan ย้ายไปกินวันอาทิตย์)",
+     "zh": [
+      "胶东田妈妈"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~14:00",
+     "title": "พักที่โรงแรมสั้น ๆ",
+     "body": "อุ่นตัว เปลี่ยนเสื้อ ชาร์จมือถือ ~1 ชม. (วันก่อนเดินเยอะ)",
+     "zh": [],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~15:15",
+     "title": "ไป Xinhaoshan Park (信号山) ชมวิวเมือง",
+     "body": "Line 2 (Qingdao Metro) Taidong → Lijin Road → <b>Taishan Road</b> (2 ป้าย) → เปลี่ยน <b>Line 4</b> ทาง Hall of the People → Guanxiangshan → <b>Xinhaoshan (信号山·青大附院)</b> (2 ป้าย) · รวม ~30–40 นาที <span class=\"tag tag-est\">ประมาณการ</span> · ผังสถานีจาก Wikipedia · เวลาเปิด ค่าเข้า และสภาพหน้าหนาวยังไม่ยืนยัน <span class=\"tag tag-chk\">เช็กใน Amap</span>",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~16:00–17:15",
+     "title": "ชมวิว + ถ่ายรูปพระอาทิตย์ตก",
+     "body": "ชิงเต่าพระอาทิตย์ตกราว 17:00 <span class=\"tag tag-est\">ประมาณการ</span> · ลมแรงบนเนิน ใส่ถุงมือ หมวก · ถ้าหนาวเกินไปหรือปิด ให้กลับ Taidong ก่อนไปเดินตลาดเย็น",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~17:30",
+     "title": "กลับ Taidong · Line 4 → Line 2",
+     "body": "Xinhaoshan → Taishan Road (Line 4) → Taidong (Line 2) · เดินไปโรงแรมแล้วพักก่อนออกไปไถตง",
+     "zh": [],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~19:00",
+     "title": "ถนนไถตง · Taidong Snack Street + Pedestrian Street",
+     "body": "หมุด: <b>Taidong Snack Street</b> · <b>Taidong Pedestrian Street</b> (Taidong 3rd Road) · ค้นเพิ่ม <span class=\"zh\">台东八路</span> · ปลาหมึกย่าง <span class=\"zh\">烤鱿鱼</span> · หอยลายผัดเผ็ด <span class=\"zh\">辣炒蛤蜊</span> · ถามราคาก่อนทุกแผง · แผงหน้าหนาวเปิดไหม <span class=\"tag tag-chk\">ยังไม่ยืนยัน</span> · กลับแท็กซี่ ¥8–12 (≈฿37–55)/คัน",
+     "zh": [
+      "台东八路",
+      "烤鱿鱼",
+      "辣炒蛤蜊"
+     ],
+     "tags": [],
+     "minor": false
+    }
+   ],
+   "cards": [
+    {
+     "title": "ถ่ายรูปที่พิพิธภัณฑ์",
+     "body": "<ul><li>ถ่ายภายนอกให้เห็นกระป๋องเบียร์ยักษ์ + ตัวหนังสือ <span class=\"zh\">青岛啤酒</span></li> <li>ภาพนี้ถ่ายตอนเย็น/ฟ้าครึ้ม ตอนไปจริงแสงจะต่างออกไป</li> <li>ถ้าซื้อตั๋วแบบทัวร์/ชิมเบียร์ เช็กรอบและแพ็กเกจในแอป <span class=\"tag tag-chk\">ต้องเช็ก</span></li></ul>",
+     "zh": [
+      "青岛啤酒"
+     ]
+    }
+   ],
+   "photos": [
+    {
+     "src": "/trips/qingdao-2027/photo-04.webp",
+     "caption": "หน้าพิพิธภัณฑ์เบียร์ชิงเต่า (ภาพจากคุณ)"
+    }
+   ]
+  },
+  {
+   "label": "DAY 5",
+   "title": "อาทิตย์ 17 ม.ค. · สวนสัตว์ & แปดด่าน",
+   "transport": "Line 2 + Didi",
+   "accent": "#5E7C4A",
+   "items": [
+    {
+     "time": "~08:40",
+     "title": "กาแฟก่อนเข้าสวนสัตว์ · Luckin Coffee (15th Street Shop)",
+     "body": "<span class=\"zh\">瑞幸咖啡</span> · หมุดของคุณ · ใกล้ประตูตะวันตกจริงไหม ยังไม่ยืนยัน <span class=\"tag tag-chk\">เช็กในแอป</span>",
+     "zh": [
+      "瑞幸咖啡"
+     ],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~09:00–11:00",
+     "title": "สวนสัตว์ชิงเต่า · ประตูตะวันตก · ตั๋ว <b>¥8.5 (≈฿39)</b>/คน · อยู่ 1.5–2 ชม.",
+     "body": "<b>Qingdao Zoo</b> (<span class=\"zh\">青岛动物园 · 延安一路102号</span>) · เปิด 08:30–16:30 (หยุดเข้า 16:00) <span class=\"tag tag-ok\">ยืนยันแล้ว</span> บางรีวิวเขียน 08:00 · ตั๋วตรวจแยกโซน อย่าทำหาย<br/>หน้าหนาวสัตว์ไม่ได้อยู่ในโรงเรือนหมด — รีวิวหน้าหนาวเห็นเสือ ลิง หงส์ อยู่ข้างนอก · <b>เน้น:</b> แพนด้าแดง <span class=\"zh\">小熊猫</span> → เขาเสือ <span class=\"zh\">虎山</span> → เขาลิง <span class=\"zh\">猴山</span> · ช่วงเช้าสัตว์ออกมากินอาหาร · ห้องแพนด้ายักษ์ (ในร่ม) มีรีวิวว่าปิดปรับปรุง <span class=\"tag tag-chk\">ต้องเช็ก</span> · ทางขึ้นลงเนินเยอะ",
+     "zh": [
+      "青岛动物园",
+      "延安一路102号",
+      "小熊猫",
+      "虎山",
+      "猴山"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~11:15",
+     "title": "มื้อเที่ยงก่อนคิวยาว · Shuangheyuan Seafood Dumplings (Shangqing Road Branch)",
+     "body": "Shangqing Road No.12 · เกี๊ยวซีฟู้ด <span class=\"zh\">海鲜水饺</span> · Didi สั้น ๆ จากสวนสัตว์ ¥12–20 (≈฿55–92)/คัน <span class=\"tag tag-est\">ประมาณการ</span>",
+     "zh": [
+      "海鲜水饺"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~12:30",
+     "title": "Haixin Bridge (<span class=\"zh\">海信桥</span>) → Zhiquan Road (<span class=\"zh\">芝泉路</span>) · Line 2 1 ป้าย",
+     "body": "ระยะจากร้านไปสถานี เช็กใน Amap <span class=\"tag tag-chk\">ยังไม่ทราบระยะ</span> · ~¥2–4/คน <span class=\"tag tag-est\">ประมาณการ</span> · ถ้าไกล ใช้ Didi ตรงไปวัดได้เลย",
+     "zh": [
+      "海信桥",
+      "芝泉路"
+     ],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~13:00–14:15",
+     "title": "Qingdao Art Academy Art Gallery + วัดจ้านซาน <span class=\"zh\">湛山寺</span>",
+     "body": "อยู่ใกล้สถานี Zhiquan Road · วัดพุทธ แต่งตัวสุภาพ · วัดเปิดราว 08:00–17:00 ค่าเข้าแหล่งข้อมูลไม่ตรงกัน (ฟรี / ¥10) <span class=\"tag tag-chk\">เช็กใน Amap</span> · เวลาเปิดหอศิลป์ยังไม่ทราบ",
+     "zh": [
+      "湛山寺"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~14:30–16:00",
+     "title": "เดินเล่นแปดด่าน <span class=\"zh\">八大关风景区</span> (Badaguan) · ใหม่",
+     "body": "ย่านวิลล่ายุโรปริมทะเล อยู่ทางใต้ของวัดจ้านซาน · เดิน ~1–1.5 กม. หรือ Didi สั้น ๆ <span class=\"tag tag-est\">ประมาณการ</span> · ถนนในย่านเดินชมได้ทั่วไป<br/><b>เส้นทาง:</b> ถนนจวีหย่งกวน <span class=\"zh\">居庸关路</span> → <b>บ้านเจ้าหญิง</b> <span class=\"zh\">公主楼</span> (居庸关路10号 ดูภายนอก) → <b>หัวสือโหลว</b> <span class=\"zh\">花石楼</span> (黄海路18号 ปราสาทหินริมทะเล ขึ้นชมวิวได้) → หาด <span class=\"zh\">第二海水浴场</span> · ค่าเข้าตัวอาคารและเวลาเปิดหน้าหนาว <span class=\"tag tag-chk\">เช็กใน Amap</span> · ม.ค. ต้นไม้โล่ง แต่ตัวบ้านยังถ่ายรูปสวย",
+     "zh": [
+      "八大关风景区",
+      "居庸关路",
+      "公主楼",
+      "花石楼",
+      "第二海水浴场"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~16:00",
+     "title": "Didi แปดด่าน → May 4th Square (<span class=\"zh\">五四广场</span>)",
+     "body": "ระยะ ~3 กม. · ~10–15 นาที · ¥12–20 (≈฿55–92)/คัน <span class=\"tag tag-est\">ประมาณการ</span>",
+     "zh": [
+      "五四广场"
+     ],
+     "tags": [],
+     "minor": true
+    },
+    {
+     "time": "~16:30–17:15",
+     "title": "พระอาทิตย์ตกที่ Wusi Square · Wind in May (<span class=\"zh\">五月的风</span>)",
+     "body": "อาทิตย์ตกราว 17:00 <span class=\"tag tag-est\">ประมาณการ</span> · ลมทะเลแรง ใส่เสื้อกันลม",
+     "zh": [
+      "五月的风"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~18:00",
+     "title": "มื้อเย็น · Grand’s Home (Qingdao MIXC Branch)",
+     "body": "<span class=\"zh\">外婆家</span> ใน Qingdao MIXC · เดินจาก May 4th Square · คิวรอและเวลาเปิดยังไม่ทราบ <span class=\"tag tag-chk\">เช็กใน Amap</span>",
+     "zh": [
+      "外婆家"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "~20:00",
+     "title": "กลับโรงแรม · Line 2 → Taidong (<span class=\"zh\">台东</span>) 3 ป้าย",
+     "body": "แล้วเดิน ~1 กม. หรือแท็กซี่ ¥8–12 (≈฿37–55)/คัน · เที่ยวสุดท้ายยังไม่ยืนยัน <span class=\"tag tag-chk\">เช็กในแอป</span> · นอน ~22:00 เช้าจันทร์ออก ~08:15",
+     "zh": [
+      "台东"
+     ],
+     "tags": [],
+     "minor": true
+    }
+   ],
+   "cards": [
+    {
+     "title": "ปักหมุด Amap วันนี้ — คัดลอกชื่อจีนไปค้นได้เลย",
+     "body": "1 · <span class=\"zh\">青岛动物园</span> สวนสัตว์ (ประตูตะวันตก) 6 · <span class=\"zh\">八大关风景区</span> แปดด่าน 2 · <span class=\"zh\">瑞幸咖啡</span> Luckin (หมุดเดิม 15th Street Shop) 7 · <span class=\"zh\">公主楼</span> บ้านเจ้าหญิง 3 · <b>Shuangheyuan</b> (หมุดเดิม Shangqing Road) 8 · <span class=\"zh\">花石楼</span> หัวสือโหลว 4 · <span class=\"zh\">芝泉路</span> สถานี Line 2 9 · <span class=\"zh\">五四广场</span> May 4th Square 5 · <span class=\"zh\">湛山寺</span> วัดจ้านซาน 10 · <span class=\"zh\">青岛万象城</span> MIXC (外婆家)",
+     "zh": [
+      "青岛动物园",
+      "八大关风景区",
+      "瑞幸咖啡",
+      "公主楼",
+      "花石楼",
+      "芝泉路",
+      "五四广场",
+      "湛山寺",
+      "青岛万象城"
+     ]
+    }
+   ],
+   "photos": [
+    {
+     "src": "/trips/qingdao-2027/photo-05.webp",
+     "caption": "Wind in May (五月的风) · May 4th Square (ภาพจากคุณ)"
+    },
+    {
+     "src": "/trips/qingdao-2027/photo-06.webp",
+     "caption": "แพนด้าแดง 小熊猫 (ภาพจากคุณ · ไม่ได้ยืนยันว่าถ่ายที่สวนสัตว์ชิงเต่า)"
+    }
+   ]
+  },
+  {
+   "label": "DAY 6",
+   "title": "จันทร์ 18 ม.ค. · บินกลับภูเก็ต",
+   "transport": "ถึงภูเก็ต 21:55",
+   "accent": "#5B6B78",
+   "items": [
+    {
+     "time": "~08:15",
+     "title": "ออกจากโรงแรม ไปสนามบิน TAO",
+     "body": "<b>จองรถ Trip.com</b> (รับที่โรงแรม → <span class=\"zh\">青岛胶东国际机场</span> ~60 นาที) · ตั้งเวลารับ ~08:15 · ราคาขากลับยังไม่เห็น ใช้ราคาขาไป ฿854–1,005/คัน เป็นแนวทาง <span class=\"tag tag-chk\">ตรวจตอนจอง</span> · จองไว้ตั้งแต่ก่อนเดินทาง ไม่ต้องเรียกรถสดริมถนน",
+     "zh": [
+      "青岛胶东国际机场"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "10:00–10:20",
+     "title": "ถึง TAO · เช็กอิน CZ3520",
+     "body": "ขอบอร์ดดิ้งพาส <b>ทั้ง 2 เที่ยว</b> (TAO→CAN และ CAN→HKT) + ป้ายกระเป๋าถึงภูเก็ต (Trip.com ระบุไม่ต้องรับ/โหลดใหม่) · ประโยคอังกฤษที่เคาน์เตอร์: “Boarding passes for both flights, and bags checked through to Phuket, please.”",
+     "zh": [],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "12:20",
+     "title": "CZ3520 → CAN T2 (ถึง 16:00)",
+     "body": "Airbus A320-212 · มีอาหารบนเครื่อง",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "ok",
+       "text": "ยืนยันแล้ว"
+      }
+     ],
+     "minor": false
+    },
+    {
+     "time": "16:00–19:05",
+     "title": "ต่อเครื่องที่กวางโจว (3 ชม. 5 น.)",
+     "body": "ในประเทศ → ต่างประเทศ: ตามป้าย Transfer <span class=\"zh\">转机</span> → ตรวจความปลอดภัย → ศุลกากร → ตม.ขาออก · <b>เดินตามป้ายทันที</b> ไม่ต้องออกนอกสนามบิน",
+     "zh": [
+      "转机"
+     ],
+     "tags": [],
+     "minor": false
+    },
+    {
+     "time": "19:05",
+     "title": "CZ6057 → ภูเก็ต (ถึง 21:55)",
+     "body": "Airbus A320-212 · มีอาหารบนเครื่อง",
+     "zh": [],
+     "tags": [
+      {
+       "kind": "ok",
+       "text": "ยืนยันแล้ว"
+      }
+     ],
+     "minor": false
+    }
+   ],
+   "cards": [
+    {
+     "title": "ก่อนออกจากโรงแรม",
+     "body": "<ul><li>เก็บกระเป๋า · เช็กพาสปอร์ต · ของเหลวในกระเป๋าถือ ≤ 100 มล.</li><li>เช็กเอาท์ก่อน 12:00 (ไม่มีปัญหา เพราะออกเช้า)</li><li>เหลือ ¥ ใช้ซื้อของที่สนามบิน/แลกคืนก็ได้</li></ul>",
+     "zh": []
+    }
+   ],
+   "photos": []
+  }
+ ],
+ "phrases": [
+  {
+   "section": "จ่ายเงิน",
+   "items": [
+    {
+     "meaning": "ใช้ Alipay ได้ไหม",
+     "zh": "支付宝 可以吗？",
+     "pinyin": "zhīfùbǎo kěyǐ ma",
+     "read": "จือฟู่เปา เคอี่ มา"
+    },
+    {
+     "meaning": "ใช้บัตรได้ไหม",
+     "zh": "刷卡 可以吗？",
+     "pinyin": "shuākǎ kěyǐ ma",
+     "read": "ซวาข่า เคอี่ มา"
+    },
+    {
+     "meaning": "เท่าไร",
+     "zh": "多少钱？",
+     "pinyin": "duōshao qián",
+     "read": "ตัวเสา เฉียน"
+    },
+    {
+     "meaning": "เก็บเงิน",
+     "zh": "买单",
+     "pinyin": "mǎidān",
+     "read": "หมายตัน"
+    }
+   ]
+  },
+  {
+   "section": "สั่งของ",
+   "items": [
+    {
+     "meaning": "เอาอันนี้ 1 อัน · 2 อัน",
+     "zh": "这个，一个 · 两个",
+     "pinyin": "zhège, yí gè · liǎng gè",
+     "read": "เจ้อเกอ อี๋เกอ · เหลี่ยงเกอ"
+    },
+    {
+     "meaning": "ไม่เผ็ด · ไม่ใส่ผักชี",
+     "zh": "不要辣 · 不要香菜",
+     "pinyin": "bú yào là · bú yào xiāngcài",
+     "read": "ปู๋เย่า ล่า · ปู๋เย่า เซียงไช่"
+    },
+    {
+     "meaning": "ห่อกลับ",
+     "zh": "打包",
+     "pinyin": "dǎbāo",
+     "read": "ต่าเปา"
+    }
+   ]
+  },
+  {
+   "section": "ฟังไม่ออก / ถาม",
+   "items": [
+    {
+     "meaning": "ฟังไม่ออก",
+     "zh": "听不懂",
+     "pinyin": "tīng bu dǒng",
+     "read": "ทิงปู้ต่ง"
+    },
+    {
+     "meaning": "นี่เนื้ออะไร",
+     "zh": "这是什么肉？",
+     "pinyin": "zhè shì shénme ròu",
+     "read": "เจ้อ ซื่อ เสินเมอ โร่ว"
+    },
+    {
+     "meaning": "นี่เนื้อหมูใช่ไหม",
+     "zh": "这是猪肉吗？",
+     "pinyin": "zhè shì zhūròu ma",
+     "read": "เจ้อ ซื่อ จูโร่ว มา"
+    },
+    {
+     "meaning": "ห้องน้ำอยู่ไหน",
+     "zh": "厕所 在哪里？",
+     "pinyin": "cèsuǒ zài nǎlǐ",
+     "read": "เช่อสั่ว ไจ้ หนาหลี่"
+    }
+   ]
+  },
+  {
+   "section": "เข้าร้านอาหาร",
+   "items": [
+    {
+     "meaning": "2 คน",
+     "zh": "两位",
+     "pinyin": "liǎng wèi",
+     "read": "เหลี่ยง เว่ย"
+    },
+    {
+     "meaning": "มีที่ว่างไหม",
+     "zh": "有位子吗？",
+     "pinyin": "yǒu wèizi ma",
+     "read": "โหย่ว เว่ยจึ มา"
+    },
+    {
+     "meaning": "ขอเมนู",
+     "zh": "菜单",
+     "pinyin": "càidān",
+     "read": "ไช่ตาน"
+    },
+    {
+     "meaning": "มีเมนูอังกฤษไหม",
+     "zh": "有英文菜单吗？",
+     "pinyin": "yǒu Yīngwén càidān ma",
+     "read": "โหย่ว อิงเหวิน ไช่ตาน มา"
+    },
+    {
+     "meaning": "อันไหนอร่อย",
+     "zh": "哪个好吃？",
+     "pinyin": "nǎge hǎochī",
+     "read": "หน่าเกอ เห่าชือ"
+    },
+    {
+     "meaning": "เมนูแนะนำ",
+     "zh": "推荐菜",
+     "pinyin": "tuījiàn cài",
+     "read": "ทุยเจี้ยน ไช่"
+    }
+   ]
+  },
+  {
+   "section": "เรียก DiDi / แท็กซี่",
+   "items": [
+    {
+     "meaning": "2 คน กระเป๋าใหญ่ 2 ใบ เล็ก 2 ใบ",
+     "zh": "我们两个人，两个大行李箱，两个小行李箱。",
+     "pinyin": "Wǒmen liǎng ge rén, liǎng ge dà xínglixiāng, liǎng ge xiǎo xínglixiāng",
+     "read": "หว่อเมิน เหลี่ยงเกอเหริน เหลี่ยงเกอ ต้า สิงหลี่เซียง เหลี่ยงเกอ เสี่ยว สิงหลี่เซียง"
+    },
+    {
+     "meaning": "ขอเปิดท้ายรถ",
+     "zh": "请开一下后备箱。",
+     "pinyin": "Qǐng kāi yíxià hòubèixiāng",
+     "read": "ฉิ่ง ไคอี๋เซี่ย โฮ่วเเป้ยเซียง"
+    },
+    {
+     "meaning": "ต้องการรถคันใหญ่พอใส่กระเป๋า",
+     "zh": "需要大一点的车。",
+     "pinyin": "Xūyào dà yìdiǎn de chē",
+     "read": "ซวีเย่า ต้า อี๋เตี่ยน เตอ เชอ"
+    }
+   ]
+  }
+ ]
+}
