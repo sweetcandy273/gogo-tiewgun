@@ -1,5 +1,9 @@
 import type { Day, Guide, Phrase } from '../registry'
 import data from './guide.json'
+import readings from './readings.json'
+import { registerReadings } from '../../lib/zhReadings'
+
+registerReadings(readings)
 
 const P = '/trips/qingdao-2027'
 

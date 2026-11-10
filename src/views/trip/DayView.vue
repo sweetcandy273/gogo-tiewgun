@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader.vue'
 import { amapSearchUrl, amapCity } from '../../lib/amap'
 import { copyPlace, onZhClick } from '../../lib/copy'
 import { useTrip } from '../../lib/tripContext'
+import { withReadings } from '../../lib/zhReadings'
 
 const props = defineProps<{ n: string }>()
 const { guide, base } = useTrip()
@@ -34,10 +35,10 @@ watchEffect(() => { amapCity.value = day.value?.city ?? guide?.amapCity ?? '' })
             <p class="text-xs font-bold" :style="{ color: day.accent }">{{ it.time }}</p>
             <!-- title/body are bundled trip-book HTML (sanitized at build), never user input -->
             <h3 class="rich mt-0.5 leading-snug font-semibold">
-              <span v-html="it.title" />
+              <span v-html="withReadings(it.title)" />
               <span v-for="t in it.tags" :key="t.text" :class="['tag', `tag-${t.kind}`]">{{ t.text }}</span>
             </h3>
-            <div v-if="it.body" class="rich mt-1.5 text-sm leading-relaxed text-ink/85" v-html="it.body" />
+            <div v-if="it.body" class="rich mt-1.5 text-sm leading-relaxed text-ink/85" v-html="withReadings(it.body)" />
           </div>
         </li>
       </ol>
@@ -57,7 +58,7 @@ watchEffect(() => { amapCity.value = day.value?.city ?? guide?.amapCity ?? '' })
               <MapPin class="size-3.5" /> Amap
             </a>
           </div>
-          <div class="rich text-sm leading-relaxed text-ink/85" v-html="c.body" />
+          <div class="rich text-sm leading-relaxed text-ink/85" v-html="withReadings(c.body)" />
         </section>
       </div>
 

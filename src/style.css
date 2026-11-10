@@ -20,8 +20,13 @@ body { @apply bg-cream text-ink antialiased; }
   background: color-mix(in srgb, var(--color-sea) 12%, transparent);
   cursor: pointer;
 }
+.rich .zh, .zh-chip { white-space: nowrap; }
 .rich .zh:active, .zh-chip:active { background: color-mix(in srgb, var(--color-sea) 30%, transparent); }
 .rich b { @apply font-semibold; }
+/* Thai reading shown after a Chinese chip */
+.zh-th { @apply mx-0.5 text-[0.78em] font-normal text-mute; }
+.zh-th::before { content: "("; }
+.zh-th::after { content: ")"; }
 .rich ul { @apply my-1 list-disc space-y-0.5 pl-5; }
 .rich .mono { font-variant-numeric: tabular-nums; }
 
