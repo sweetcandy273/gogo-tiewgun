@@ -25,7 +25,7 @@ const guide: Guide = {
   flightsTitle: 'เที่ยวบิน China Southern',
   flights: [
     { leg: 'ไป 1', date: 'พุธ 13 ม.ค.', no: 'CZ6064', route: 'ภูเก็ต HKT → กวางโจว CAN T2', time: '17:25 → 22:15' },
-    { leg: 'ไป 2', date: 'พฤหัส 14 ม.ค.', no: 'CZ3609', route: 'กวางโจว CAN T2 → ชิงเต่า TAO', time: '17:00 → 19:55' },
+    { leg: 'ไป 2', date: 'พฤหัส 14 ม.ค.', no: 'CZ3573', route: 'กวางโจว CAN T2 → ชิงเต่า TAO', time: '15:00 → 17:55' },
     { leg: 'กลับ 1', date: 'จันทร์ 18 ม.ค.', no: 'CZ3520', route: 'ชิงเต่า TAO → กวางโจว CAN T2', time: '12:20 → 16:00' },
     { leg: 'กลับ 2', date: 'จันทร์ 18 ม.ค.', no: 'CZ6057', route: 'กวางโจว CAN T2 → ภูเก็ต HKT', time: '19:05 → 21:55' },
   ],

@@ -34,6 +34,7 @@ body { @apply bg-cream text-ink antialiased; }
 .tag-ok { @apply bg-emerald-100 text-emerald-800; }
 .tag-est { @apply bg-amber-100 text-amber-800; }
 .tag-chk { @apply bg-rose-100 text-rose-700; }
+.tag-new { @apply bg-brick text-white; }
 .tag-nav, .tag-note { @apply bg-slate-200 text-slate-700; }
 
 .card { @apply rounded-2xl bg-white/90 p-4 shadow-sm ring-1 ring-black/5; }
