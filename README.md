@@ -31,7 +31,7 @@ npm run build      # type-check + build → dist/
 ## ตั้งค่า Supabase (ทำครั้งเดียว)
 
 1. สร้างโปรเจกต์ที่ supabase.com (region Singapore) เปิด Data API ไว้
-2. รัน `supabase/schema.sql` ใน **SQL Editor** (สร้างตาราง + ทริป 1) แล้วรันไฟล์ใน `supabase/migrations/` ตามลำดับเลข (ชุดแต่งกาย + รูป, ติ๊กจ่ายแล้ว) · `supabase/seed.sql` ไม่บังคับ
+2. รัน `supabase/schema.sql` ใน **SQL Editor** (สร้างตาราง + ทริป 1) แล้วรันไฟล์ใน `supabase/migrations/` ตามลำดับเลข (ชุดแต่งกาย + รูป, ติ๊กจ่ายแล้ว, เช็กลิสต์ร่วม) · `supabase/seed.sql` ไม่บังคับ
 3. **Project Settings → API Keys** คัดลอก Project URL และ publishable key ใส่ `.env.local`:
 
 ```

@@ -97,3 +97,13 @@ export const KINDS: Record<ClothKind, { label: string; emoji: string }> = {
   shoes: { label: 'รองเท้า', emoji: '👟' },
   accessory: { label: 'ของใช้/อื่น ๆ', emoji: '🧣' },
 }
+
+/** One shared checklist tick (guide items use key "g:<text>", own items "c:<uuid>" with a label) */
+export interface CheckItem {
+  trip_id: string
+  item_key: string
+  label: string | null
+  done: boolean
+  done_by: Person | null
+  created_at?: string
+}

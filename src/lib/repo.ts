@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { supabase } from './supabase'
-import type { Cloth, ClothInput, Expense, ExpenseInput, OutfitPick, Trip, TripInput } from './types'
+import type { CheckItem, Cloth, ClothInput, Expense, ExpenseInput, OutfitPick, Trip, TripInput } from './types'
 
 export interface Repo {
   listTrips(): Promise<Trip[]>
@@ -22,15 +22,47 @@ export interface Repo {
   listPicks(tripId: string): Promise<OutfitPick[]>
   /** replace the picks of `day` among `scope` clothes (one person's) with `selected` */
   setPicks(tripId: string, day: string, scope: string[], selected: string[]): Promise<void>
+  listChecks(tripId: string): Promise<CheckItem[]>
+  /** insert or update one tick / own item (by trip + key) */
+  saveCheck(row: CheckItem): Promise<void>
+  saveChecks(rows: CheckItem[]): Promise<void>
+  removeCheck(tripId: string, key: string): Promise<void>
   /** calls onChange when data changes on another device; returns unsubscribe */
   subscribe(onChange: () => void): () => void
+  /** separate channel so a missing checklist table can't break the main one */
+  subscribeChecks(onChange: () => void): () => void
 }
+
+/** Checklist kept in this browser (demo mode, or before migration 006 is run). */
+const localChecks = {
+  key: 'gogo-checks',
+  all(): CheckItem[] {
+    try {
+      const v: unknown = JSON.parse(localStorage.getItem(this.key) ?? '[]')
+      return Array.isArray(v) ? (v as CheckItem[]) : []
+    } catch { return [] }
+  },
+  write(v: CheckItem[]) { try { localStorage.setItem(this.key, JSON.stringify(v)) } catch { /* ignore */ } },
+  list(tripId: string) { return this.all().filter((r) => r.trip_id === tripId) },
+  save(rows: CheckItem[]) {
+    const all = this.all()
+    for (const r of rows) {
+      const i = all.findIndex((x) => x.trip_id === r.trip_id && x.item_key === r.item_key)
+      if (i >= 0) all[i] = { ...all[i], ...r }
+      else all.push({ ...r, created_at: r.created_at ?? new Date().toISOString() })
+    }
+    this.write(all)
+  },
+  remove(tripId: string, key: string) { this.write(this.all().filter((r) => !(r.trip_id === tripId && r.item_key === key))) },
+}
+
+const CHECK_COLS = 'trip_id,item_key,label,done,done_by,created_at'
 
 const TRIP_COLS = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
 const EXP_COLS_BASE = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,created_at,updated_at'
 
 /** Which optional DB migrations are applied (detected at runtime so the app keeps working before SQL is run). */
-export const dbFeatures = reactive({ settled: true, outfits: true, clothMoney: true })
+export const dbFeatures = reactive({ settled: true, outfits: true, clothMoney: true, checklist: true })
 
 /** Postgres/PostgREST "column or table does not exist" style errors. */
 export function isMissingSchema(err: unknown): boolean {
@@ -203,6 +235,39 @@ class SupabaseRepo implements Repo {
     }
   }
 
+  async listChecks(tripId: string) {
+    if (!dbFeatures.checklist) return localChecks.list(tripId)
+    const { data, error } = await this.db.from('checklist').select(CHECK_COLS).eq('trip_id', tripId)
+    if (error) {
+      if (isMissingSchema(error)) { dbFeatures.checklist = false; return localChecks.list(tripId) }
+      throw error
+    }
+    return (data ?? []).map((r) => ({ ...(r as CheckItem), done: r.done === true }))
+  }
+  async saveCheck(row: CheckItem) { await this.saveChecks([row]) }
+  async saveChecks(rows: CheckItem[]) {
+    if (!rows.length) return
+    if (!dbFeatures.checklist) return localChecks.save(rows)
+    const clean = rows.map(({ trip_id, item_key, label, done, done_by }) => ({ trip_id, item_key, label, done, done_by }))
+    const { error } = await this.db.from('checklist').upsert(clean, { onConflict: 'trip_id,item_key' })
+    if (error) {
+      if (isMissingSchema(error)) { dbFeatures.checklist = false; return localChecks.save(rows) }
+      throw error
+    }
+  }
+  async removeCheck(tripId: string, key: string) {
+    if (!dbFeatures.checklist) return localChecks.remove(tripId, key)
+    const { error } = await this.db.from('checklist').delete().eq('trip_id', tripId).eq('item_key', key)
+    if (error) throw error
+  }
+  subscribeChecks(onChange: () => void): () => void {
+    const ch: RealtimeChannel = this.db
+      .channel(`gogo-checks-${crypto.randomUUID()}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'checklist' }, onChange)
+      .subscribe()
+    return () => { void this.db.removeChannel(ch) }
+  }
+
   subscribe(onChange: () => void): () => void {
     const ch: RealtimeChannel = this.db
       .channel(`gogo-${crypto.randomUUID()}`)
@@ -320,7 +385,12 @@ class LocalRepo implements Repo {
     const keep = this.picks().filter((p) => !(p.trip_id === tripId && p.day === day && drop.has(p.cloth_id)))
     this.write('gogo-demo-picks', [...keep, ...selected.map((cloth_id) => ({ trip_id: tripId, day, cloth_id }))])
   }
+  async listChecks(tripId: string) { return localChecks.list(tripId) }
+  async saveCheck(row: CheckItem) { localChecks.save([row]) }
+  async saveChecks(rows: CheckItem[]) { localChecks.save(rows) }
+  async removeCheck(tripId: string, key: string) { localChecks.remove(tripId, key) }
   subscribe() { return () => {} }
+  subscribeChecks() { return () => {} }
 }
 
 export const repo: Repo = supabase ? new SupabaseRepo() : new LocalRepo()

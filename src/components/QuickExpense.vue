@@ -2,21 +2,13 @@
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { X } from 'lucide-vue-next'
 import { showToast } from '../lib/copy'
+import { me, setMe } from '../lib/me'
 import { isNetworkError, queueExpense } from '../lib/outbox'
 import { errMessage, repo } from '../lib/repo'
 import { CATEGORIES, CURRENCIES, PEOPLE, SPLITS, type Category, type ExpenseInput, type Person, type Split, type Trip } from '../lib/types'
 
 const props = defineProps<{ trip: Trip }>()
 const emit = defineEmits<{ close: [] }>()
-
-const ME_KEY = 'gogo-me'
-function loadMe(): Person | '' {
-  try {
-    const v = localStorage.getItem(ME_KEY)
-    return v === 'aum' || v === 'tiw' ? v : ''
-  } catch { return '' }
-}
-function saveMe(p: Person) { try { localStorage.setItem(ME_KEY, p) } catch { /* ignore */ } }
 
 function today(): string {
   const d = new Date()
@@ -28,7 +20,7 @@ const amount = ref('')
 const currency = ref(props.trip.currency)
 const category = ref<Category>('food')
 const title = ref('')
-const paidBy = ref<Person | ''>(loadMe())
+const paidBy = ref<Person | ''>(me.value)
 const split = ref<Split>('half')
 const saving = ref(false)
 const error = ref<string | null>(null)
@@ -48,7 +40,7 @@ async function save() {
     error.value = !paidBy.value ? 'เลือกว่าใครจ่าย' : 'ใส่จำนวนเงิน'
     return
   }
-  saveMe(paidBy.value)
+  setMe(paidBy.value)
   const input: ExpenseInput = {
     trip_id: props.trip.id,
     spent_on: today(),
