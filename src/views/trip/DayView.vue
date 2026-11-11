@@ -7,6 +7,7 @@ import { amapSearchUrl, amapCity } from '../../lib/amap'
 import { copyPlace, onZhClick } from '../../lib/copy'
 import { useTrip } from '../../lib/tripContext'
 import { withReadings } from '../../lib/zhReadings'
+import { usePlanNow } from '../../lib/usePlanNow'
 
 const props = defineProps<{ n: string }>()
 const { guide, base } = useTrip()
@@ -16,6 +17,11 @@ const idx = computed(() => {
   return Number.isInteger(i) && i >= 0 && i < days.length ? i : 0
 })
 const day = computed(() => days[idx.value])
+const { state } = usePlanNow(guide)
+const nowItem = computed(() => {
+  const s = state.value
+  return s?.kind === 'during' && s.current.day === idx.value ? s.current.item : -1
+})
 watchEffect(() => { amapCity.value = day.value?.city ?? guide?.amapCity ?? '' })
 </script>
 
@@ -24,15 +30,18 @@ watchEffect(() => { amapCity.value = day.value?.city ?? guide?.amapCity ?? '' })
   <div v-else @click="onZhClick">
     <PageHeader :kicker="day.label" :title="day.title" :sub="day.transport" :accent="day.accent" />
     <div class="px-4">
-      <p class="mb-3 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "เปิดใน Amap"</p>
+      <p class="mb-3 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "ให้คนขับดู" / "Amap"</p>
 
       <ol class="relative space-y-3 border-l-2 pl-5" :style="{ borderColor: day.accent + '55' }">
         <li v-for="(it, i) in day.items" :key="i" class="relative">
           <span class="absolute top-4 -left-[1.72rem] size-3 rounded-full ring-4 ring-cream"
                 :class="it.minor ? 'border-2 bg-white' : ''"
                 :style="it.minor ? { borderColor: day.accent } : { background: day.accent }" />
-          <div class="card !p-3.5">
-            <p class="text-xs font-bold" :style="{ color: day.accent }">{{ it.time }}</p>
+          <div class="card !p-3.5" :class="i === nowItem ? 'ring-2' : ''" :style="i === nowItem ? { '--tw-ring-color': day.accent } : {}">
+            <p class="text-xs font-bold" :style="{ color: day.accent }">
+              {{ it.time }}
+              <span v-if="i === nowItem" class="ml-1 rounded-full px-2 py-0.5 text-[0.65rem] text-white" :style="{ background: day.accent }">ตอนนี้</span>
+            </p>
             <!-- title/body are bundled trip-book HTML (sanitized at build), never user input -->
             <h3 class="rich mt-0.5 leading-snug font-semibold">
               <span v-html="withReadings(it.title)" />

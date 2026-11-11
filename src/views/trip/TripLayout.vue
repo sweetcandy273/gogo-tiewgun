@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, provide, ref, watch } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { CalendarDays, Info, Languages, LayoutGrid, Shirt, Wallet } from 'lucide-vue-next'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { CalendarDays, Info, Languages, LayoutGrid, Plus, Shirt, Wallet } from 'lucide-vue-next'
+import QuickExpense from '../../components/QuickExpense.vue'
 import { errMessage, repo } from '../../lib/repo'
 import { TripKey } from '../../lib/tripContext'
 import type { Trip } from '../../lib/types'
@@ -9,6 +10,10 @@ import { guides } from '../../trips/registry'
 
 const props = defineProps<{ slug: string }>()
 const router = useRouter()
+const route = useRoute()
+const quickOpen = ref(false)
+// pages with their own add button don't get the quick one
+const showQuick = computed(() => !!trip.value && route.name !== 'expenses' && route.name !== 'outfits')
 const trip = ref<Trip | null>(null)
 const error = ref<string | null>(null)
 
@@ -52,6 +57,12 @@ const tabs = computed(() => [
     <p v-else-if="!trip" class="py-16 text-center text-sm text-mute">กำลังโหลด…</p>
     <RouterView v-else :key="slug" />
   </div>
+
+  <button v-if="showQuick" class="fixed right-5 bottom-24 z-30 flex items-center gap-1.5 rounded-full bg-brick py-3 pr-4 pl-3.5 font-semibold text-white shadow-lg active:scale-95"
+          aria-label="จดค่าใช้จ่ายด่วน" @click="quickOpen = true">
+    <Plus class="size-5" /> จดเงิน
+  </button>
+  <QuickExpense v-if="quickOpen && trip" :trip="trip" @close="quickOpen = false" />
 
   <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-black/5 bg-white/95 backdrop-blur" style="padding-bottom: env(safe-area-inset-bottom)">
     <div class="mx-auto grid max-w-2xl" :style="{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }">

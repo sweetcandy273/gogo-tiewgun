@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { ChevronRight, MapPin, Phone, Plane, Wallet } from 'lucide-vue-next'
+import { CarTaxiFront, ChevronRight, MapPin, Phone, Plane, Wallet } from 'lucide-vue-next'
 import { amapCity, amapSearchUrl } from '../../lib/amap'
 import { copyPlace } from '../../lib/copy'
+import { showDriver } from '../../lib/driver'
+import NowCard from '../../components/NowCard.vue'
+import { clockOverride } from '../../lib/now'
 import ZhText from '../../components/ZhText.vue'
 import { useTrip } from '../../lib/tripContext'
 
 const { trip, guide, base } = useTrip()
 amapCity.value = guide?.amapCity ?? ''
 
-const now = ref(Date.now())
-const timer = setInterval(() => { now.value = Date.now() }, 60_000)
+const fixed = clockOverride(window.location.search)
+const now = ref(fixed ?? Date.now())
+const timer = setInterval(() => { now.value = fixed ?? Date.now() }, 60_000)
 onBeforeUnmount(() => clearInterval(timer))
 
 const countdown = computed(() => {
@@ -44,6 +48,8 @@ const countdown = computed(() => {
     </section>
 
     <template v-if="guide">
+      <NowCard :guide="guide" :base="base" />
+
       <section>
         <h2 class="mb-2 text-lg font-bold">แผนรายวัน</h2>
         <div class="space-y-2">
@@ -86,7 +92,10 @@ const countdown = computed(() => {
               <p class="text-sm text-mute"><ZhText :text="h.address" /></p>
               <p class="text-xs text-mute">{{ h.note }}</p>
               <div class="flex flex-wrap gap-2 pt-1">
-                <a :href="amapSearchUrl(h.zh, h.amapCity)" target="_blank" rel="noopener noreferrer" class="btn-primary !py-1.5 text-xs">
+                <button class="btn-primary !py-1.5 text-xs" @click="showDriver({ zh: h.zh, sub: h.address, city: h.amapCity })">
+                  <CarTaxiFront class="size-3.5" /> ให้คนขับดู
+                </button>
+                <a :href="amapSearchUrl(h.zh, h.amapCity)" target="_blank" rel="noopener noreferrer" class="btn-ghost !py-1.5 text-xs">
                   <MapPin class="size-3.5" /> เปิดใน Amap
                 </a>
                 <a v-for="p in h.phones" :key="p" :href="`tel:${p.replace(/[^+\d]/g, '')}`" class="btn-ghost !py-1.5 text-xs">
@@ -96,7 +105,7 @@ const countdown = computed(() => {
             </div>
           </article>
         </div>
-        <p class="mt-2 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "เปิดใน Amap"</p>
+        <p class="mt-2 text-xs text-mute">แตะคำภาษาจีน (พื้นสีฟ้า) = คัดลอก + ปุ่ม "ให้คนขับดู" / "Amap"</p>
       </section>
     </template>
   </div>

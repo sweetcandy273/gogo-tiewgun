@@ -6,6 +6,7 @@ import { registerReadings } from '../../lib/zhReadings'
 registerReadings(readings)
 
 const P = '/trips/qingdao-2027'
+const DATES = ['2027-01-13', '2027-01-14', '2027-01-14', '2027-01-15', '2027-01-16', '2027-01-17', '2027-01-18']
 
 const guide: Guide = {
   hero: {
@@ -14,8 +15,15 @@ const guide: Guide = {
     sub: 'ภูเก็ต → กวางโจว → ชิงเต่า · 6 วัน 5 คืน', departAt: '2027-01-13T17:25:00+07:00',
   },
   amapCity: '青岛',
-  // DAY 1 and DAY 2 morning are in Guangzhou
-  days: (data.days as Day[]).map((d, i) => ({ ...d, city: i < 2 ? '广州' : '青岛' })),
+  // DAY 1 and DAY 2 morning are in Guangzhou; times are China time (+08:00)
+  // except the first two DAY 1 items, which are still in Phuket (+07:00)
+  days: (data.days as Day[]).map((d, i) => ({
+    ...d,
+    city: i < 2 ? '广州' : '青岛',
+    date: DATES[i],
+    tz: '+08:00',
+    items: i === 0 ? d.items.map((it, j) => (j < 2 ? { ...it, tz: '+07:00' } : it)) : d.items,
+  })),
   phrases: data.phrases as { section: string; items: Phrase[] }[],
   drinks: [
     ['แก้วเล็ก', '小杯', 'xiǎo bēi'], ['แก้วกลาง', '中杯', 'zhōng bēi'], ['แก้วใหญ่', '大杯', 'dà bēi'],

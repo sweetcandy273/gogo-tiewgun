@@ -7,6 +7,8 @@ export interface DayItem {
   zh: string[]
   tags: { kind: string; text: string }[]
   minor: boolean
+  /** UTC offset when it differs from the day's, e.g. '+07:00' before leaving Thailand */
+  tz?: string
 }
 export interface Day {
   label: string
@@ -15,6 +17,10 @@ export interface Day {
   accent: string
   /** Amap city hint, e.g. '青岛' */
   city?: string
+  /** YYYY-MM-DD of the first item — enables the "now" card */
+  date?: string
+  /** UTC offset of the day's times (default '+08:00') */
+  tz?: string
   items: DayItem[]
   cards: { title: string; body: string; zh: string[] }[]
   photos: { src: string; caption: string }[]
