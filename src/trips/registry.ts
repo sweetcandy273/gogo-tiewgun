@@ -33,7 +33,8 @@ export interface Guide {
   /** default Amap city hint for the trip */
   amapCity?: string
   days: Day[]
-  phrases: { section: string; items: Phrase[] }[]
+  /** grid = compact tiles (numbers etc.); note = tip under the heading */
+  phrases: { section: string; items: Phrase[]; grid?: boolean; note?: string }[]
   drinks?: readonly (readonly [string, string, string])[]
   flights: { leg: string; date: string; no: string; route: string; time: string }[]
   flightsTitle?: string

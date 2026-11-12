@@ -1,4 +1,4 @@
-import type { Day, Guide, Phrase } from '../registry'
+import type { Day, Guide } from '../registry'
 import data from './guide.json'
 import readings from './readings.json'
 import { registerReadings } from '../../lib/zhReadings'
@@ -24,7 +24,7 @@ const guide: Guide = {
     tz: '+08:00',
     items: i === 0 ? d.items.map((it, j) => (j < 2 ? { ...it, tz: '+07:00' } : it)) : d.items,
   })),
-  phrases: data.phrases as { section: string; items: Phrase[] }[],
+  phrases: data.phrases as Guide['phrases'],
   drinks: [
     ['แก้วเล็ก', '小杯', 'xiǎo bēi'], ['แก้วกลาง', '中杯', 'zhōng bēi'], ['แก้วใหญ่', '大杯', 'dà bēi'],
     ['น้ำแข็งน้อย', '少冰', 'shǎo bīng'], ['น้ำแข็งปกติ', '正常冰', 'zhèngcháng bīng'], ['ไม่ใส่น้ำแข็ง', '去冰', 'qù bīng'],

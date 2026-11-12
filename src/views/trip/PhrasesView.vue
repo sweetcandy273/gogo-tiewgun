@@ -14,7 +14,18 @@ const tts = canSpeak()
   <div v-if="guide" class="space-y-5 px-4">
     <section v-for="s in guide.phrases" :key="s.section">
       <h2 class="mb-2 font-bold text-brick">{{ s.section }}</h2>
-      <div class="grid gap-2 sm:grid-cols-2">
+      <p v-if="s.note" class="mb-2 text-xs leading-relaxed text-mute">{{ s.note }}</p>
+      <div v-if="s.grid" class="grid grid-cols-3 gap-2">
+        <button v-for="p in s.items" :key="p.zh" class="card relative !p-2.5 text-center active:opacity-70"
+                :aria-label="`${p.meaning} ${p.zh}`" @click="tts ? speakZh(p.zh) : copyText(p.zh)">
+          <Volume2 v-if="tts" class="absolute top-1.5 right-1.5 size-3.5 text-sea" />
+          <p class="text-xs font-bold text-brick">{{ p.meaning }}</p>
+          <p class="text-xl font-bold text-navy">{{ p.zh }}</p>
+          <p class="text-[0.65rem] text-mute">{{ p.pinyin }}</p>
+          <p class="text-xs font-semibold">{{ p.read }}</p>
+        </button>
+      </div>
+      <div v-else class="grid gap-2 sm:grid-cols-2">
         <div v-for="p in s.items" :key="p.zh" class="card flex items-start gap-2 !p-0">
           <button class="min-w-0 flex-1 p-3 text-left active:opacity-70" @click="copyText(p.zh)">
             <p class="text-xs font-semibold text-brick">{{ p.meaning }}</p>
