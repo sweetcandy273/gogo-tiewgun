@@ -46,7 +46,7 @@ export function daysByCloth(picks: readonly OutfitPick[]): Map<string, string[]>
 /** clothes worn on a day, optionally only one person's */
 export function outfitFor(day: string, owner: Person | null, clothes: readonly Cloth[], picks: readonly OutfitPick[]): Cloth[] {
   const ids = new Set(picks.filter((p) => p.day === day).map((p) => p.cloth_id))
-  const order: ClothKind[] = ['outer', 'top', 'inner', 'bottom', 'shoes', 'accessory']
+  const order: ClothKind[] = ['airport', 'outer', 'top', 'inner', 'bottom', 'shoes', 'accessory', 'sleep']
   return clothes
     .filter((c) => ids.has(c.id) && (owner === null || c.owner === owner))
     .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind))

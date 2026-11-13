@@ -63,7 +63,7 @@ export const CURRENCIES: Record<string, { symbol: string; name: string }> = {
 }
 export const sym = (c: string) => CURRENCIES[c]?.symbol ?? c + ' '
 
-export type ClothKind = 'inner' | 'top' | 'outer' | 'bottom' | 'shoes' | 'accessory'
+export type ClothKind = 'inner' | 'top' | 'outer' | 'bottom' | 'shoes' | 'sleep' | 'airport' | 'accessory'
 
 export interface Cloth {
   id: string
@@ -95,6 +95,8 @@ export const KINDS: Record<ClothKind, { label: string; emoji: string }> = {
   inner: { label: 'ชั้นใน/ฮีท', emoji: '🧦' },
   bottom: { label: 'กางเกง/ล่าง', emoji: '👖' },
   shoes: { label: 'รองเท้า', emoji: '👟' },
+  sleep: { label: 'ชุดนอน', emoji: '🛌' },
+  airport: { label: 'ชุดสนามบิน', emoji: '✈️' },
   accessory: { label: 'ของใช้/อื่น ๆ', emoji: '🧣' },
 }
 

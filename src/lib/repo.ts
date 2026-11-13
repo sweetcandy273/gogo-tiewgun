@@ -396,7 +396,10 @@ class LocalRepo implements Repo {
 export const repo: Repo = supabase ? new SupabaseRepo() : new LocalRepo()
 
 export function errMessage(err: unknown): string {
-  if (err instanceof Error) return err.message
-  if (err && typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
-  return 'เกิดข้อผิดพลาด'
+  let msg = 'เกิดข้อผิดพลาด'
+  if (err instanceof Error) msg = err.message
+  else if (err && typeof err === 'object' && 'message' in err) msg = String((err as { message: unknown }).message)
+  // new clothes types need supabase/migrations/007_cloth_kinds.sql
+  if (msg.includes('clothes_kind_check')) return 'หมวดนี้ยังใช้ไม่ได้ ต้องรัน SQL 007 (หมวดชุดนอน/ชุดสนามบิน) ใน Supabase ก่อน'
+  return msg
 }

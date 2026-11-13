@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isMissingSchema } from './repo'
+import { errMessage, isMissingSchema } from './repo'
 
 describe('isMissingSchema', () => {
   const cases = [
@@ -12,4 +12,15 @@ describe('isMissingSchema', () => {
     { name: 'null', err: null, want: false },
   ]
   for (const c of cases) it(c.name, () => expect(isMissingSchema(c.err)).toBe(c.want))
+})
+
+describe('errMessage', () => {
+  it.each([
+    [new Error('boom'), 'boom'],
+    [{ message: 'new row for relation "clothes" violates check constraint "clothes_kind_check"' }, 'หมวดนี้ยังใช้ไม่ได้ ต้องรัน SQL 007 (หมวดชุดนอน/ชุดสนามบิน) ใน Supabase ก่อน'],
+    [null, 'เกิดข้อผิดพลาด'],
+    ['text', 'เกิดข้อผิดพลาด'],
+  ])('%o', (e, want) => {
+    expect(errMessage(e)).toBe(want)
+  })
 })
