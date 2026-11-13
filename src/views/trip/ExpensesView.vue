@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { ArrowRight, Check, Pencil, Plus, RefreshCw, Shirt } from 'lucide-vue-next'
+import { ArrowRight, Check, Pencil, Plus, RefreshCw, Search, Shirt, X } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import ExpenseForm from '../../components/ExpenseForm.vue'
 import TripForm from '../../components/TripForm.vue'
 import { showToast } from '../../lib/copy'
 import { dbFeatures, errMessage, isMissingSchema, repo } from '../../lib/repo'
 import { baht, clothesMoney, toSatang, toTransfer } from '../../lib/settle'
+import { matchCloth } from '../../lib/wardrobe'
 import { useTrip } from '../../lib/tripContext'
 import { CATEGORIES, KINDS, PEOPLE, SPLITS, sym, type Category, type Cloth, type Expense, type ExpenseInput, type TripInput } from '../../lib/types'
 import { useExpenses } from '../../lib/useExpenses'
@@ -56,7 +57,10 @@ onBeforeUnmount(() => unsub?.())
 
 const cm = computed(() => clothesMoney(clothes.value))
 const unpriced = computed(() => clothes.value.filter((c) => c.price == null).length)
-const billableSorted = computed(() => [...cm.value.billable].sort((a, b) => Number(a.settled) - Number(b.settled)))
+const clothQuery = ref('')
+const billableSorted = computed(() => [...cm.value.billable]
+  .filter((c) => matchCloth(c, clothQuery.value, { kind: KINDS[c.kind].label, owner: c.owner ? PEOPLE[c.owner] : '' }))
+  .sort((a, b) => Number(a.settled) - Number(b.settled)))
 const clothesOn = computed(() => clothesReady.value && dbFeatures.clothMoney)
 const combined = computed(() => toTransfer(summary.value.netAum + (clothesOn.value ? cm.value.netAum : 0)))
 const combinedPaid = computed(() => toTransfer(summary.value.settledNetAum + (clothesOn.value ? cm.value.settledNetAum : 0)))
@@ -293,7 +297,15 @@ function refresh() { void load(); void loadClothes() }
             <h3 class="text-sm font-bold">รายการที่ต้องจ่ายคืนคนซื้อ</h3>
             <RouterLink :to="`${base}/outfits`" class="flex items-center gap-1 text-xs text-sea"><Shirt class="size-3.5" /> แก้ราคา/เจ้าของ</RouterLink>
           </div>
+          <label v-if="cm.billable.length > 5" class="relative mb-2 block">
+            <Search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-mute" />
+            <input v-model="clothQuery" type="text" class="field !py-2 !pr-9 !pl-9 text-sm" placeholder="ค้นหาเสื้อผ้า เช่น ฮีท, 133" aria-label="ค้นหาเสื้อผ้า" enterkeyhint="search" />
+            <button v-if="clothQuery" type="button" class="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 text-mute hover:bg-black/5" aria-label="ล้างคำค้นหา" @click="clothQuery = ''">
+              <X class="size-4" />
+            </button>
+          </label>
           <p v-if="!cm.billable.length" class="card text-center text-sm text-mute">ไม่มีเสื้อผ้าที่ซื้อให้อีกคน</p>
+          <p v-else-if="!billableSorted.length" class="card text-center text-sm text-mute">ไม่พบ "{{ clothQuery.trim() }}"</p>
           <div v-else class="card divide-y divide-black/5 !p-0">
             <div v-for="c in billableSorted" :key="c.id" class="flex items-center gap-2 py-1 pr-3.5 pl-1.5" :class="c.settled ? 'opacity-60' : ''">
               <button class="grid size-10 shrink-0 place-items-center" :aria-label="c.settled ? 'โอนแล้ว แตะเพื่อเปลี่ยนเป็นยังค้าง' : 'ยังค้าง แตะเพื่อติ๊กว่าโอนแล้ว'" @click="toggleCloth(c)">

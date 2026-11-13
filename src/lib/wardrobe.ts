@@ -51,3 +51,39 @@ export function outfitFor(day: string, owner: Person | null, clothes: readonly C
     .filter((c) => ids.has(c.id) && (owner === null || c.owner === owner))
     .sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind))
 }
+
+/* ---- search ---- */
+
+// words people type that are spelled differently in item names
+const ALIASES: [RegExp, string][] = [
+  [/ฮีทเทค|ฮีตเทค|ฮีต|heattech|heat/g, 'ฮีท'],
+  [/ไหมพรหม/g, 'ไหมพรม'],
+  [/สเวตเตอร์|สเว็ต|sweater/g, 'สเวต'],
+  [/ฟลีซ|fleece/g, 'ฟรีซ'],
+  [/hoodie|ฮู้ดดี้/g, 'ฮู้ด'],
+  [/ยูนิโคล่|uniqlo/g, 'ยูนิโค่'],
+]
+
+/** lower-case, aliases applied, whitespace and the word สี removed (Thai is typed without spaces) */
+export function normalizeSearch(s: string): string {
+  let t = s.toLowerCase().normalize('NFC')
+  for (const [re, to] of ALIASES) t = t.replace(re, to)
+  // "สีกรม" and "กรม" mean the same colour; drop the word สี (colour) on both sides
+  return t.replace(/\s+/g, '').replace(/สี(?![่้๊๋])/g, '')
+}
+
+/**
+ * Every word of the query must appear in the name, note, type label or owner name.
+ * A plain number also matches the start of the price (incl. shipping), e.g. "19" or "190" → ฿190.
+ */
+export function matchCloth(
+  c: Pick<Cloth, 'name' | 'note' | 'kind' | 'price' | 'owner'>,
+  query: string,
+  labels: { kind: string; owner: string },
+): boolean {
+  const words = query.trim().split(/\s+/).map(normalizeSearch).filter(Boolean)
+  if (!words.length) return true
+  const hay = normalizeSearch([c.name, c.note ?? '', labels.kind, labels.owner].join(' '))
+  const price = c.price != null && Number.isFinite(c.price) ? String(Math.round(c.price * 100) / 100) : ''
+  return words.every((w) => hay.includes(w) || (/^\d+(\.\d+)?$/.test(w) && price.startsWith(w)))
+}

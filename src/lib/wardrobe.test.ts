@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { daysByCloth, outfitFor, tripDays, wardrobeStats } from './wardrobe'
+import { daysByCloth, matchCloth, outfitFor, tripDays, wardrobeStats } from './wardrobe'
 import type { Cloth, OutfitPick } from './types'
 
 const c = (id: string, owner: Cloth['owner'], kind: Cloth['kind']): Cloth => ({
@@ -39,4 +39,36 @@ describe('wardrobe', () => {
     { name: 'tiw on 16th', day: '2027-01-16', owner: 'tiw' as const, want: [] },
   ]
   for (const t of cases) it(t.name, () => expect(outfitFor(t.day, t.owner, clothes, picks).map((x) => x.id)).toEqual(t.want))
+})
+
+describe('matchCloth', () => {
+  const labels = { kind: 'ชั้นใน/ฮีท', owner: 'ทิว' }
+  const c = { name: 'ฮีทกรมคอกลม', note: null, kind: 'inner' as const, price: 190, owner: 'tiw' as const }
+
+  it.each([
+    ['', true],
+    ['   ', true],
+    ['ฮีทเทค', true],
+    ['heattech', true],
+    ['ฮีท กรม', true],
+    ['ฮีทเทค คอกลม สีกรม', true], // สี is ignored
+    ['กรม คอกลม', true],
+    ['คอ กลม', true],
+    ['ทิว', true],
+    ['อุ้ม', false],
+    ['190', true],
+    ['19', true],
+    ['180', false],
+    ['คอเต่า', false],
+    ['สี่', false],
+  ])('%j → %s', (q, want) => {
+    expect(matchCloth(c, q, labels)).toBe(want)
+  })
+
+  it('searches the note and handles a missing price', () => {
+    const x = { name: 'B97 ฟรีซดำ', note: 'ใส่ทับฮีท', kind: 'outer' as const, price: null, owner: null }
+    expect(matchCloth(x, 'fleece', { kind: 'เสื้อนอก', owner: '' })).toBe(true)
+    expect(matchCloth(x, 'ทับ', { kind: 'เสื้อนอก', owner: '' })).toBe(true)
+    expect(matchCloth(x, '309', { kind: 'เสื้อนอก', owner: '' })).toBe(false)
+  })
 })

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { Check, Plus, Shirt, X } from 'lucide-vue-next'
+import { Check, Plus, Search, Shirt, X } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import ClothForm, { type ClothFormResult } from '../../components/ClothForm.vue'
 import { showToast } from '../../lib/copy'
 import { dbFeatures, errMessage, isMissingSchema, repo } from '../../lib/repo'
 import { useTrip } from '../../lib/tripContext'
 import { KINDS, PEOPLE, type Cloth, type ClothKind, type OutfitPick, type Person } from '../../lib/types'
-import { daysByCloth, outfitFor, tripDays, wardrobeStats } from '../../lib/wardrobe'
+import { daysByCloth, matchCloth, outfitFor, tripDays, wardrobeStats } from '../../lib/wardrobe'
 
 const { trip } = useTrip()
 const clothes = ref<Cloth[]>([])
@@ -20,6 +20,8 @@ const person = ref<Person>('aum')
 const days = computed(() => tripDays(trip.value.start_date, trip.value.end_date))
 const day = ref<string>('')
 const kindFilter = ref<ClothKind | 'all'>('all')
+const query = ref('')
+const searching = computed(() => query.value.trim() !== '')
 
 const formOpen = ref(false)
 const editing = ref<Cloth | null>(null)
@@ -62,8 +64,10 @@ const stats = computed(() => wardrobeStats(clothes.value, picks.value))
 const worn = computed(() => daysByCloth(picks.value))
 const mine = computed(() => clothes.value.filter((c) => c.owner === person.value))
 const unassigned = computed(() => clothes.value.filter((c) => c.owner === null))
-const shelf = computed(() => [...mine.value, ...unassigned.value]
-  .filter((c) => kindFilter.value === 'all' || c.kind === kindFilter.value))
+// searching looks through everyone's clothes, not only the selected person's
+const shelf = computed(() => (searching.value ? clothes.value : [...mine.value, ...unassigned.value])
+  .filter((c) => kindFilter.value === 'all' || c.kind === kindFilter.value)
+  .filter((c) => !searching.value || matchCloth(c, query.value, { kind: KINDS[c.kind].label, owner: c.owner ? PEOPLE[c.owner] : 'ยังไม่ระบุ' })))
 const todays = computed(() => (day.value ? outfitFor(day.value, person.value, clothes.value, picks.value) : []))
 const countOn = (d: string) => outfitFor(d, person.value, clothes.value, picks.value).length
 
@@ -216,20 +220,28 @@ async function removeCloth() {
 
     <!-- wardrobe -->
     <section>
-      <h2 class="mb-2 font-bold">ตู้เสื้อผ้าของ{{ PEOPLE[person] }}</h2>
+      <h2 class="mb-2 font-bold">{{ searching ? `ผลการค้นหา · ทั้งสองคน (${shelf.length})` : `ตู้เสื้อผ้าของ${PEOPLE[person]}` }}</h2>
+      <label class="relative mb-2 block">
+        <Search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-mute" />
+        <input v-model="query" type="text" class="field !py-2 !pr-9 !pl-9 text-sm" placeholder="ค้นหา เช่น ฮีท, คอเต่า, กรม, 133" aria-label="ค้นหาเสื้อผ้า" enterkeyhint="search" />
+        <button v-if="searching" type="button" class="absolute top-1/2 right-2 -translate-y-1/2 rounded-full p-1 text-mute hover:bg-black/5" aria-label="ล้างคำค้นหา" @click="query = ''">
+          <X class="size-4" />
+        </button>
+      </label>
       <div class="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-2">
         <button class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1" :class="kindFilter === 'all' ? 'bg-ink text-white ring-transparent' : 'bg-white ring-black/10'" @click="kindFilter = 'all'">ทั้งหมด</button>
         <button v-for="(k, key) in KINDS" :key="key" class="shrink-0 rounded-full px-3 py-1.5 text-sm ring-1"
           :class="kindFilter === key ? 'bg-ink text-white ring-transparent' : 'bg-white ring-black/10'" @click="kindFilter = key">{{ k.emoji }} {{ k.label }}</button>
       </div>
       <p v-if="loading" class="py-8 text-center text-sm text-mute">กำลังโหลด…</p>
-      <p v-else-if="!shelf.length" class="py-8 text-center text-sm text-mute"><Shirt class="mx-auto mb-1 size-6" />ยังไม่มีเสื้อผ้าในหมวดนี้</p>
+      <p v-else-if="!shelf.length" class="py-8 text-center text-sm text-mute"><Shirt class="mx-auto mb-1 size-6" />{{ searching ? `ไม่พบ "${query.trim()}"` : 'ยังไม่มีเสื้อผ้าในหมวดนี้' }}</p>
       <div v-else class="grid grid-cols-3 gap-2">
         <button v-for="c in shelf" :key="c.id" class="card !p-1.5 text-left active:scale-[.98]" @click="openEdit(c)">
           <div class="relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-sand">
             <img v-if="c.photo_url" :src="c.photo_url" :alt="c.name" class="size-full object-cover" loading="lazy" />
             <span v-else class="text-3xl">{{ KINDS[c.kind].emoji }}</span>
             <span v-if="!c.owner" class="absolute top-1 left-1 rounded bg-amber-100 px-1 text-[0.6rem] font-semibold text-amber-800">ยังไม่ระบุ</span>
+            <span v-else-if="searching" class="absolute top-1 left-1 rounded bg-white/90 px-1 text-[0.6rem] font-semibold text-navy">{{ PEOPLE[c.owner] }}</span>
           </div>
           <p class="mt-1 line-clamp-2 px-0.5 text-xs leading-snug">{{ c.name }}</p>
           <p v-if="c.price != null" class="px-0.5 text-[0.65rem] font-semibold">฿{{ c.price.toLocaleString('th-TH', { maximumFractionDigits: 2 }) }}</p>
