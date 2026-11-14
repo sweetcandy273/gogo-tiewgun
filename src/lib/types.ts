@@ -109,3 +109,26 @@ export interface CheckItem {
   done_by: Person | null
   created_at?: string
 }
+
+/* ---- booking vault (needs the unlock code; see supabase/migrations/008_vault.sql) ---- */
+export type BookingKind = 'flight' | 'hotel' | 'transport' | 'ticket' | 'insurance' | 'other'
+
+export const BOOKING_KINDS: Record<BookingKind, { label: string; icon: string }> = {
+  flight: { label: 'ตั๋วเครื่องบิน', icon: '✈️' },
+  hotel: { label: 'ที่พัก', icon: '🏨' },
+  transport: { label: 'รถ / เดินทาง', icon: '🚗' },
+  ticket: { label: 'ตั๋ว / บัตรเข้าชม', icon: '🎟️' },
+  insurance: { label: 'ประกัน', icon: '🛡️' },
+  other: { label: 'อื่นๆ', icon: '📌' },
+}
+
+export interface Booking {
+  id: string
+  trip_id: string
+  kind: BookingKind
+  title: string
+  ref: string | null
+  on_date: string | null // YYYY-MM-DD
+  details: string | null
+}
+export type BookingInput = Omit<Booking, 'id' | 'trip_id'> & { id?: string }

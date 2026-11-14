@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { CarTaxiFront, ChevronRight, MapPin, Phone, Plane, Wallet } from 'lucide-vue-next'
+import { CarTaxiFront, ChevronRight, Lock, MapPin, Phone, Plane, Wallet } from 'lucide-vue-next'
 import { amapCity, amapSearchUrl } from '../../lib/amap'
 import { copyPlace } from '../../lib/copy'
 import { showDriver } from '../../lib/driver'
@@ -49,6 +49,15 @@ const countdown = computed(() => {
 
     <template v-if="guide">
       <NowCard :guide="guide" :base="base" />
+
+      <RouterLink :to="`${base}/bookings`" class="card flex items-center gap-3 !p-3 transition active:scale-[.99]">
+        <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-navy text-white"><Lock class="size-5" /></span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-semibold">ข้อมูลการจอง</span>
+          <span class="block truncate text-xs text-mute">เลขจอง ตั๋ว ที่พัก · ใส่รหัสเพื่อดู</span>
+        </span>
+        <ChevronRight class="size-5 shrink-0 text-mute" />
+      </RouterLink>
 
       <section>
         <h2 class="mb-2 text-lg font-bold">แผนรายวัน</h2>

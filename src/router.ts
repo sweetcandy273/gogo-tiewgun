@@ -15,6 +15,7 @@ export const router = createRouter({
         { path: 'expenses', name: 'expenses', component: () => import('./views/trip/ExpensesView.vue') },
         { path: 'outfits', name: 'outfits', component: () => import('./views/trip/OutfitsView.vue') },
         { path: 'phrases', name: 'phrases', component: () => import('./views/trip/PhrasesView.vue') },
+        { path: 'bookings', name: 'bookings', component: () => import('./views/trip/BookingsView.vue') },
         { path: 'info', name: 'info', component: () => import('./views/trip/InfoView.vue') },
       ],
     },

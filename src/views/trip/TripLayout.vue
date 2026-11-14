@@ -13,7 +13,7 @@ const router = useRouter()
 const route = useRoute()
 const quickOpen = ref(false)
 // pages with their own add button don't get the quick one
-const showQuick = computed(() => !!trip.value && route.name !== 'expenses' && route.name !== 'outfits')
+const showQuick = computed(() => !!trip.value && route.name !== 'expenses' && route.name !== 'outfits' && route.name !== 'bookings')
 const trip = ref<Trip | null>(null)
 const error = ref<string | null>(null)
 
