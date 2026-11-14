@@ -114,10 +114,10 @@ export interface CheckItem {
 export type BookingKind = 'flight' | 'hotel' | 'transport' | 'ticket' | 'insurance' | 'other'
 
 export const BOOKING_KINDS: Record<BookingKind, { label: string; icon: string }> = {
-  flight: { label: 'ตั๋วเครื่องบิน', icon: '✈️' },
+  flight: { label: 'ตั๋วบิน', icon: '✈️' },
   hotel: { label: 'ที่พัก', icon: '🏨' },
-  transport: { label: 'รถ / เดินทาง', icon: '🚗' },
-  ticket: { label: 'ตั๋ว / บัตรเข้าชม', icon: '🎟️' },
+  transport: { label: 'รถ', icon: '🚗' },
+  ticket: { label: 'ตั๋วเข้าชม', icon: '🎟️' },
   insurance: { label: 'ประกัน', icon: '🛡️' },
   other: { label: 'อื่นๆ', icon: '📌' },
 }

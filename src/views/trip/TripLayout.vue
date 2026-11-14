@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
-import { CalendarDays, Info, Languages, LayoutGrid, Plus, Shirt, Wallet } from 'lucide-vue-next'
+import { CalendarDays, Info, Languages, LayoutGrid, Plus, Shirt, Ticket, Wallet } from 'lucide-vue-next'
 import QuickExpense from '../../components/QuickExpense.vue'
 import { errMessage, repo } from '../../lib/repo'
 import { TripKey } from '../../lib/tripContext'
@@ -44,6 +44,7 @@ watch(() => props.slug, () => { trip.value = null; void load() }, { immediate: t
 const tabs = computed(() => [
   { to: '/', label: 'ทริป', icon: LayoutGrid, show: true },
   { to: base.value, label: 'แผนเที่ยว', icon: CalendarDays, show: !!guide.value, exact: true },
+  { to: `${base.value}/bookings`, label: 'จอง', icon: Ticket, show: !!guide.value },
   { to: `${base.value}/expenses`, label: 'ค่าใช้จ่าย', icon: Wallet, show: true },
   { to: `${base.value}/outfits`, label: 'ชุด', icon: Shirt, show: true },
   { to: `${base.value}/phrases`, label: 'คำศัพท์', icon: Languages, show: !!guide.value?.phrases.length },

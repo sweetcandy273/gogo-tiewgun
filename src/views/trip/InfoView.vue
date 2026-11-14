@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
-import { ChevronRight, Lock, Phone, Plus, Trash2 } from 'lucide-vue-next'
+import { Phone, Plus, Trash2 } from 'lucide-vue-next'
 import PageHeader from '../../components/PageHeader.vue'
 import { cleanLabel, legacyToRows, mergeChecklist, type ChecklistRow } from '../../lib/checklist'
 import { showToast } from '../../lib/copy'
@@ -11,7 +10,7 @@ import { isDemo } from '../../lib/supabase'
 import { useTrip } from '../../lib/tripContext'
 import { PEOPLE, type CheckItem } from '../../lib/types'
 
-const { trip, guide, base } = useTrip()
+const { trip, guide } = useTrip()
 const tripId = trip.value.id
 const guideItems = guide?.checklist ?? []
 
@@ -108,14 +107,6 @@ onBeforeUnmount(() => { unsub?.(); clearTimeout(reloadTimer) })
 <template>
   <PageHeader kicker="INFO" title="เช็กลิสต์ & ข้อมูลสำคัญ" />
   <div v-if="guide" class="space-y-5 px-4">
-    <RouterLink :to="`${base}/bookings`" class="card flex items-center gap-3 !p-3 transition active:scale-[.99]">
-      <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-navy text-white"><Lock class="size-5" /></span>
-      <span class="min-w-0 flex-1">
-        <span class="block font-semibold">ข้อมูลการจอง</span>
-        <span class="block truncate text-xs text-mute">เลขจอง ตั๋ว ที่พัก · ใส่รหัสเพื่อดู</span>
-      </span>
-      <ChevronRight class="size-5 shrink-0 text-mute" />
-    </RouterLink>
 
     <section v-if="guide.emergency.length" class="card border-l-4 border-brick">
       <h2 class="mb-2 font-bold text-brick">เบอร์ฉุกเฉิน</h2>

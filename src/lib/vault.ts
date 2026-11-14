@@ -84,10 +84,10 @@ export function formatWait(seconds: number): string {
 
 export function failureMessage(r: Exclude<UnlockResult, { ok: true }>): string {
   switch (r.reason) {
-    case 'wrong': return `รหัสไม่ถูกต้อง (เหลือ ${r.remaining} ครั้งก่อนถูกล็อก)`
-    case 'locked': return `ใส่ผิดหลายครั้ง ถูกล็อกชั่วคราว รออีก ${formatWait(r.retry_after)}`
-    case 'bad_format': return 'รหัสเป็นตัวเลข 6 หลัก'
-    case 'not_set': return 'ยังไม่ได้ตั้งรหัส (รัน SQL 008 และ vault_set_code ใน Supabase ก่อน)'
+    case 'wrong': return `รหัสผิด เหลือ ${r.remaining} ครั้ง`
+    case 'locked': return `ล็อกชั่วคราว รออีก ${formatWait(r.retry_after)}`
+    case 'bad_format': return 'ใส่เลข 6 หลัก'
+    case 'not_set': return 'ยังไม่ได้ตั้งรหัส (รัน SQL 008 ก่อน)'
   }
 }
 
@@ -104,7 +104,7 @@ export function cleanBooking(f: {
   if (!title) errors.push('ใส่ชื่อรายการ')
   if (title.length > VAULT_LIMITS.title) errors.push('ชื่อรายการยาวเกินไป')
   if (ref.length > VAULT_LIMITS.ref) errors.push('เลขจองยาวเกินไป')
-  if (details.length > VAULT_LIMITS.details) errors.push('รายละเอียดยาวเกินไป')
+  if (details.length > VAULT_LIMITS.details) errors.push('โน้ตยาวเกินไป')
   if (!(f.kind in BOOKING_KINDS)) errors.push('เลือกหมวด')
   if (f.on_date && !/^\d{4}-\d{2}-\d{2}$/.test(f.on_date)) errors.push('วันที่ไม่ถูกต้อง')
   if (errors.length) return { ok: false, errors }

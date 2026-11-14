@@ -122,7 +122,7 @@ describe('cleanBooking', () => {
     ['empty title', { title: '  ' }, 'ใส่ชื่อรายการ'],
     ['long title', { title: 'x'.repeat(201) }, 'ชื่อรายการยาวเกินไป'],
     ['long ref', { ref: 'x'.repeat(201) }, 'เลขจองยาวเกินไป'],
-    ['long details', { details: 'x'.repeat(4001) }, 'รายละเอียดยาวเกินไป'],
+    ['long details', { details: 'x'.repeat(4001) }, 'โน้ตยาวเกินไป'],
     ['bad date', { on_date: '13/01/2027' }, 'วันที่ไม่ถูกต้อง'],
     ['bad kind', { kind: 'spaceship' as never }, 'เลือกหมวด'],
   ])('%s', (_n, patch, msg) => {

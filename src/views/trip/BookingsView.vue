@@ -50,7 +50,7 @@ async function authed<T>(fn: (t: string) => Promise<T>): Promise<T | undefined> 
   try {
     return await fn(token.value)
   } catch (e) {
-    if (e instanceof VaultAuthError) { forget('หมดอายุหรือถูกยกเลิกแล้ว ใส่รหัสอีกครั้ง'); return undefined }
+    if (e instanceof VaultAuthError) { forget('หมดอายุ ใส่รหัสอีกครั้ง'); return undefined }
     throw e
   }
 }
@@ -85,13 +85,13 @@ async function unlock() {
     const r = await vaultApi.unlock(slug, code.value, me.value || 'device')
     if (!r.ok) { message.value = failureMessage(r); code.value = ''; return }
     if (!writeToken(kv, slug, { token: r.token, expires_at: r.expires_at })) {
-      showToast('จำเครื่องนี้ไม่ได้ (เบราว์เซอร์บล็อกที่เก็บข้อมูล) ต้องใส่รหัสใหม่ทุกครั้ง')
+      showToast('จำเครื่องไม่ได้ ต้องใส่รหัสทุกครั้ง')
     }
     token.value = r.token
     code.value = ''
     await load()
   } catch (e) {
-    message.value = isNetworkError(e, navigator.onLine) ? 'ไม่มีอินเทอร์เน็ต ต้องต่อเน็ตตอนปลดล็อกครั้งแรก' : errMessage(e)
+    message.value = isNetworkError(e, navigator.onLine) ? 'ไม่มีเน็ต ต้องต่อเน็ตตอนปลดล็อก' : errMessage(e)
   } finally {
     unlocking.value = false
   }
@@ -143,7 +143,7 @@ async function revokeAll() {
   confirmRevoke.value = false
   try {
     const done = await authed(async (t) => { await vaultApi.revokeAll(t); return true })
-    if (done) forget('ออกจากระบบทุกเครื่องแล้ว')
+    if (done) forget('ออกทุกเครื่องแล้ว')
   } catch (e) {
     showToast(`ทำไม่ได้: ${errMessage(e)}`)
   }
@@ -152,36 +152,36 @@ async function revokeAll() {
 const staleText = computed(() => {
   if (staleAt.value == null) return ''
   const mins = Math.max(0, Math.round((Date.now() - staleAt.value) / 60_000))
-  return mins < 1 ? 'เมื่อสักครู่' : `${formatWait(mins * 60)}ที่แล้ว`
+  return mins < 1 ? 'เมื่อสักครู่' : `${formatWait(mins * 60)}ก่อน`
 })
 
 onMounted(() => { if (token.value) void load() })
 </script>
 
 <template>
-  <PageHeader kicker="BOOKINGS" title="ข้อมูลการจอง" sub="เลขจอง ตั๋ว ที่พัก เก็บไว้ในตู้ที่ต้องใช้รหัส" />
+  <PageHeader kicker="BOOKINGS" title="การจอง" sub="เลขจอง ตั๋ว ที่พัก" />
 
   <!-- locked -->
   <form v-if="!token" class="mx-4 card space-y-3" @submit.prevent="unlock">
-    <div class="flex items-center gap-2 font-bold"><Lock class="size-5 text-navy" /> ใส่รหัสเพื่อดูข้อมูล</div>
+    <div class="flex items-center gap-2 font-bold"><Lock class="size-5 text-navy" /> ใส่รหัส 6 หลัก</div>
     <input v-model="code" class="field text-center !text-2xl tracking-[0.3em]" type="password" inputmode="numeric" pattern="[0-9]*"
            maxlength="6" autocomplete="off" placeholder="••••••" aria-label="รหัส" />
     <p v-if="message" class="text-sm text-brick" role="alert">{{ message }}</p>
     <button class="btn-primary w-full !py-3 text-base" :disabled="!codeOk || unlocking">{{ unlocking ? 'กำลังตรวจ…' : 'ปลดล็อก' }}</button>
-    <p class="text-center text-xs text-mute">ปลดล็อกแล้วเครื่องนี้จะจำไว้ 1 ปี ไม่ต้องใส่รหัสซ้ำ</p>
+    <p class="text-center text-xs text-mute">เครื่องนี้จะจำไว้ 1 ปี</p>
   </form>
 
   <!-- unlocked -->
   <div v-else class="space-y-4 px-4">
     <p v-if="staleAt != null" class="rounded-xl bg-sand px-3 py-2 text-xs text-ink/80">
-      ไม่มีอินเทอร์เน็ต · แสดงข้อมูลที่บันทึกไว้ในเครื่อง ({{ staleText }}) · แก้ไขไม่ได้จนกว่าจะต่อเน็ต
+      ออฟไลน์ · ข้อมูลเมื่อ {{ staleText }} · แก้ไม่ได้
     </p>
     <p v-if="message" class="rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800" role="alert">{{ message }}</p>
 
-    <button class="btn-primary w-full" :disabled="staleAt != null" @click="editing = 'new'"><Plus class="size-5" /> เพิ่มการจอง</button>
+    <button class="btn-primary w-full" :disabled="staleAt != null" @click="editing = 'new'"><Plus class="size-5" /> เพิ่ม</button>
 
     <p v-if="loading && !items.length" class="py-8 text-center text-sm text-mute">กำลังโหลด…</p>
-    <p v-else-if="!items.length && !message" class="py-8 text-center text-sm text-mute">ยังไม่มีข้อมูล กด "เพิ่มการจอง" ได้เลย</p>
+    <p v-else-if="!items.length && !message" class="py-8 text-center text-sm text-mute">ยังไม่มีข้อมูล</p>
 
     <section v-for="g in groups" :key="g.kind">
       <h2 class="mb-1.5 text-sm font-bold text-navy">{{ BOOKING_KINDS[g.kind].icon }} {{ BOOKING_KINDS[g.kind].label }}</h2>
@@ -205,8 +205,8 @@ onMounted(() => { if (token.value) void load() })
     </section>
 
     <div class="space-y-2 pt-2">
-      <button class="btn-ghost w-full" @click="lockDevice"><LockOpen class="size-4" /> ล็อกเครื่องนี้ (ลืมรหัสในเครื่อง)</button>
-      <button v-if="!confirmRevoke" class="w-full text-center text-xs text-mute underline" @click="confirmRevoke = true">ออกจากระบบทุกเครื่อง (เช่น มือถือหาย)</button>
+      <button class="btn-ghost w-full" @click="lockDevice"><LockOpen class="size-4" /> ล็อกเครื่องนี้</button>
+      <button v-if="!confirmRevoke" class="w-full text-center text-xs text-mute underline" @click="confirmRevoke = true">ออกทุกเครื่อง (มือถือหาย)</button>
       <div v-else class="flex gap-2">
         <button class="btn-ghost flex-1" @click="confirmRevoke = false">ยกเลิก</button>
         <button class="btn-danger flex-1" @click="revokeAll">ออกทุกเครื่อง</button>
