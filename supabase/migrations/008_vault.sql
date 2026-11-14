@@ -1,4 +1,4 @@
--- gogo เที่ยวกัน · ตู้เก็บข้อมูลการจอง (ปลดล็อกด้วยรหัสตัวเลข 4-8 หลัก)
+-- gogo เที่ยวกัน · ตู้เก็บข้อมูลการจอง (ปลดล็อกด้วยรหัสตัวเลข 6 หลัก ที่ตั้งเอง)
 -- Run once in Supabase > SQL Editor. Then set the code (see bottom).
 --
 -- Unlike the other tables this one is NOT open to the anon key:
@@ -8,7 +8,7 @@
 --   * a correct code returns a random token valid for 1 year; only its SHA-256 is stored,
 --     so the phone never keeps the code itself
 --
--- Do not store passport / card numbers here: a 4-digit code is convenient, not strong.
+-- Do not store passport / card numbers here: a 6-digit code is convenient, not strong.
 
 create extension if not exists pgcrypto with schema extensions;
 
@@ -85,7 +85,7 @@ declare
   v_exp    timestamptz;
   v_wait   int;
 begin
-  if p_code is null or p_code !~ '^[0-9]{4,8}$' then
+  if p_code is null or p_code !~ '^[0-9]{6}$' then
     return jsonb_build_object('ok', false, 'reason', 'bad_format');
   end if;
 
@@ -192,7 +192,7 @@ create or replace function public.vault_set_code(p_slug text, p_code text) retur
 language plpgsql security definer set search_path = public, extensions as $$
 declare v_trip uuid;
 begin
-  if p_code is null or p_code !~ '^[0-9]{4,8}$' then raise exception 'code must be 4-8 digits'; end if;
+  if p_code is null or p_code !~ '^[0-9]{6}$' then raise exception 'code must be exactly 6 digits'; end if;
   select id into v_trip from public.trips where slug = p_slug;
   if v_trip is null then raise exception 'trip % not found', p_slug; end if;
   insert into public.vault_config (trip_id, code_hash)
@@ -231,7 +231,7 @@ grant execute on function public.vault_revoke_all(text)                 to anon,
 -- ---------------------------------------------------------------- STEP 2: set the code
 -- Run this line yourself with your own code (the code is not in this repo):
 --
---   select public.vault_set_code('qingdao-2027', '1234');
+--   select public.vault_set_code('qingdao-2027', '<รหัส 6 หลักที่คุณคิดเอง>');
 --
 -- Forgot it / want a new one: run the same line again (signs all devices out).
 -- Locked out: select public.vault_reset_lock('qingdao-2027');

@@ -68,7 +68,7 @@ class SupabaseVault implements VaultApi {
 }
 
 /**
- * Demo mode (no Supabase): everything stays in this browser. The code is 1234 and is NOT protected —
+ * Demo mode (no Supabase): everything stays in this browser. The code is 123456 and is NOT protected —
  * this only exists so the screens can be tried and tested without a backend.
  */
 class LocalVault implements VaultApi {
@@ -88,7 +88,7 @@ class LocalVault implements VaultApi {
 
   async unlock(slug: string, code: string) {
     if (!CODE_RE.test(code)) return { ok: false, reason: 'bad_format' } as const
-    if (code !== '1234') {
+    if (code !== '123456') {
       this.fails++
       return { ok: false, reason: 'wrong', remaining: Math.max(0, 5 - this.fails) } as const
     }

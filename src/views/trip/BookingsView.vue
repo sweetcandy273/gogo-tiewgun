@@ -164,8 +164,8 @@ onMounted(() => { if (token.value) void load() })
   <!-- locked -->
   <form v-if="!token" class="mx-4 card space-y-3" @submit.prevent="unlock">
     <div class="flex items-center gap-2 font-bold"><Lock class="size-5 text-navy" /> ใส่รหัสเพื่อดูข้อมูล</div>
-    <input v-model="code" class="field text-center !text-2xl tracking-[0.4em]" type="password" inputmode="numeric" pattern="[0-9]*"
-           maxlength="8" autocomplete="off" placeholder="••••" aria-label="รหัส" />
+    <input v-model="code" class="field text-center !text-2xl tracking-[0.3em]" type="password" inputmode="numeric" pattern="[0-9]*"
+           maxlength="6" autocomplete="off" placeholder="••••••" aria-label="รหัส" />
     <p v-if="message" class="text-sm text-brick" role="alert">{{ message }}</p>
     <button class="btn-primary w-full !py-3 text-base" :disabled="!codeOk || unlocking">{{ unlocking ? 'กำลังตรวจ…' : 'ปลดล็อก' }}</button>
     <p class="text-center text-xs text-mute">ปลดล็อกแล้วเครื่องนี้จะจำไว้ 1 ปี ไม่ต้องใส่รหัสซ้ำ</p>

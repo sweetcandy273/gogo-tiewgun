@@ -15,7 +15,7 @@ const NOW = Date.parse('2026-11-14T00:00:00Z')
 const YEAR = '2027-11-14T00:00:00Z'
 
 describe('CODE_RE', () => {
-  it.each([['1234', true], ['00000000', true], ['123', false], ['123456789', false], ['12a4', false], ['', false], [' 1234', false]])('%j', (v, want) => {
+  it.each([['123456', true], ['000000', true], ['1234', false], ['12345', false], ['1234567', false], ['12a456', false], ['', false], [' 123456', false]])('%j', (v, want) => {
     expect(CODE_RE.test(v)).toBe(want)
   })
 })
@@ -103,7 +103,7 @@ describe('failureMessage', () => {
     expect(failureMessage({ ok: false, reason: 'wrong', remaining: 3 })).toContain('เหลือ 3 ครั้ง')
     expect(failureMessage({ ok: false, reason: 'locked', retry_after: 900 })).toContain('15 นาที')
     expect(failureMessage({ ok: false, reason: 'not_set' })).toContain('SQL 008')
-    expect(failureMessage({ ok: false, reason: 'bad_format' })).toContain('4–8')
+    expect(failureMessage({ ok: false, reason: 'bad_format' })).toContain('6 หลัก')
   })
 })
 

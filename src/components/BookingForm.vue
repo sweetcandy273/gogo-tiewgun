@@ -65,7 +65,7 @@ function submit() {
                     placeholder="เวลา ที่อยู่ เบอร์ติดต่อ เงื่อนไขยกเลิก ฯลฯ" />
         </div>
 
-        <p class="rounded-xl bg-sand px-3 py-2 text-xs text-ink/80">อย่าใส่เลขพาสปอร์ตหรือเลขบัตรเครดิตที่นี่ รหัส 4 หลักไม่แข็งแรงพอ</p>
+        <p class="rounded-xl bg-sand px-3 py-2 text-xs text-ink/80">อย่าใส่เลขพาสปอร์ตหรือเลขบัตรเครดิตที่นี่ รหัส 6 หลักก็ยังไม่แข็งแรงพอ</p>
 
         <ul v-if="touched && errors.length" class="list-disc pl-5 text-sm text-brick">
           <li v-for="e in errors" :key="e">{{ e }}</li>

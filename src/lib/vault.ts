@@ -2,7 +2,7 @@ import { BOOKING_KINDS, type Booking, type BookingInput, type BookingKind } from
 
 /** Pure helpers + per-device storage for the booking vault (the server does the real checking). */
 
-export const CODE_RE = /^\d{4,8}$/
+export const CODE_RE = /^\d{6}$/
 
 export interface VaultKV { getItem(k: string): string | null; setItem(k: string, v: string): void; removeItem(k: string): void }
 export interface StoredToken { token: string; expires_at: string }
@@ -86,7 +86,7 @@ export function failureMessage(r: Exclude<UnlockResult, { ok: true }>): string {
   switch (r.reason) {
     case 'wrong': return `รหัสไม่ถูกต้อง (เหลือ ${r.remaining} ครั้งก่อนถูกล็อก)`
     case 'locked': return `ใส่ผิดหลายครั้ง ถูกล็อกชั่วคราว รออีก ${formatWait(r.retry_after)}`
-    case 'bad_format': return 'รหัสเป็นตัวเลข 4–8 หลัก'
+    case 'bad_format': return 'รหัสเป็นตัวเลข 6 หลัก'
     case 'not_set': return 'ยังไม่ได้ตั้งรหัส (รัน SQL 008 และ vault_set_code ใน Supabase ก่อน)'
   }
 }
