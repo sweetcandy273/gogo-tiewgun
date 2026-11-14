@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { daysByCloth, matchCloth, outfitFor, tripDays, wardrobeStats } from './wardrobe'
+import { daysByCloth, matchCloth, otherDays, outfitFor, tripDays, wardrobeStats } from './wardrobe'
 import type { Cloth, OutfitPick } from './types'
 
 const c = (id: string, owner: Cloth['owner'], kind: Cloth['kind']): Cloth => ({
@@ -70,5 +70,17 @@ describe('matchCloth', () => {
     expect(matchCloth(x, 'fleece', { kind: 'เสื้อนอก', owner: '' })).toBe(true)
     expect(matchCloth(x, 'ทับ', { kind: 'เสื้อนอก', owner: '' })).toBe(true)
     expect(matchCloth(x, '309', { kind: 'เสื้อนอก', owner: '' })).toBe(false)
+  })
+})
+
+describe('otherDays', () => {
+  const worn = new Map([['a', ['2027-01-15', '2027-01-13', '2027-01-15']], ['b', ['2027-01-14']]])
+  it.each([
+    ['a', '2027-01-14', ['2027-01-13', '2027-01-15']],
+    ['a', '2027-01-15', ['2027-01-13']],
+    ['b', '2027-01-14', []],
+    ['missing', '2027-01-14', []],
+  ])('%s on %s', (id, day, want) => {
+    expect(otherDays(worn, id, day)).toEqual(want)
   })
 })

@@ -43,6 +43,11 @@ export function daysByCloth(picks: readonly OutfitPick[]): Map<string, string[]>
   return m
 }
 
+/** other days (sorted, no duplicates) a piece is already planned for, excluding `day` */
+export function otherDays(worn: ReadonlyMap<string, readonly string[]>, clothId: string, day: string): string[] {
+  return [...new Set(worn.get(clothId) ?? [])].filter((d) => d !== day).sort()
+}
+
 /** clothes worn on a day, optionally only one person's */
 export function outfitFor(day: string, owner: Person | null, clothes: readonly Cloth[], picks: readonly OutfitPick[]): Cloth[] {
   const ids = new Set(picks.filter((p) => p.day === day).map((p) => p.cloth_id))

@@ -7,7 +7,7 @@ import { showToast } from '../../lib/copy'
 import { dbFeatures, errMessage, isMissingSchema, repo } from '../../lib/repo'
 import { useTrip } from '../../lib/tripContext'
 import { KINDS, PEOPLE, type Cloth, type ClothKind, type OutfitPick, type Person } from '../../lib/types'
-import { daysByCloth, matchCloth, outfitFor, tripDays, wardrobeStats } from '../../lib/wardrobe'
+import { daysByCloth, matchCloth, otherDays, outfitFor, tripDays, wardrobeStats } from '../../lib/wardrobe'
 
 const { trip } = useTrip()
 const clothes = ref<Cloth[]>([])
@@ -273,6 +273,10 @@ async function removeCloth() {
             <span v-if="pickerSel.has(c.id)" class="absolute top-1 right-1 grid size-6 place-items-center rounded-full bg-brick text-white"><Check class="size-4" /></span>
           </div>
           <p class="mt-1 line-clamp-2 text-xs">{{ c.name }}</p>
+          <div v-if="otherDays(worn, c.id, day).length" class="mt-0.5 flex flex-wrap gap-0.5" :aria-label="`ใส่วันอื่นแล้ว ${otherDays(worn, c.id, day).map(shortDay).join(', ')}`">
+            <span v-for="d in otherDays(worn, c.id, day)" :key="d" class="rounded bg-sea/15 px-1 text-[0.6rem] leading-4 font-semibold text-navy">{{ shortDay(d) }}</span>
+          </div>
+          <p v-else class="mt-0.5 text-[0.6rem] text-mute">ยังไม่ได้ใส่วันอื่น</p>
         </button>
       </div>
       <div class="p-4 pt-0" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom))">
