@@ -190,11 +190,12 @@ async function removeCloth() {
 
     <!-- day planner -->
     <section v-if="days.length">
-      <div class="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1">
+      <!-- pt/pr leave room for the count badges: a scroll container clips anything outside it -->
+      <div class="-mx-4 -mt-2 flex gap-2.5 overflow-x-auto px-4 pt-2.5 pr-6 pb-1">
         <button v-for="d in days" :key="d" class="relative shrink-0 rounded-xl px-3 py-2 text-sm ring-1"
           :class="day === d ? 'bg-brick text-white ring-transparent' : 'bg-white ring-black/10'" @click="day = d">
           {{ shortDay(d) }}
-          <span v-if="countOn(d)" class="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-sea text-[0.65rem] font-bold text-white">{{ countOn(d) }}</span>
+          <span v-if="countOn(d)" class="absolute -top-2 -right-2 z-10 grid size-5 place-items-center rounded-full bg-sea text-[0.65rem] font-bold text-white ring-2 ring-cream" :aria-label="`${countOn(d)} ชิ้น`">{{ countOn(d) }}</span>
         </button>
       </div>
 
