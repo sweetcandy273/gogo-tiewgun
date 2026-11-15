@@ -97,12 +97,12 @@ function submit() {
         </ul>
         <button class="btn-primary w-full !py-3 text-base">บันทึก</button>
         <template v-if="trip">
-          <button v-if="!confirmDelete" type="button" class="btn-ghost w-full !text-brick" @click="confirmDelete = true">ลบทริปนี้</button>
+          <button v-if="!confirmDelete" type="button" class="btn-ghost w-full !text-brick" @click="confirmDelete = true">ย้ายทริปนี้ไปถังขยะ</button>
           <div v-else class="space-y-2">
-            <p class="text-sm text-brick">ลบทริปและค่าใช้จ่ายทั้งหมดของทริปนี้ กู้คืนไม่ได้</p>
+            <p class="text-sm text-brick">ทริปนี้จะหายจากหน้าแรก ข้อมูลยังอยู่ กู้คืนได้จากถังขยะ</p>
             <div class="flex gap-2">
-              <button type="button" class="btn-ghost flex-1" @click="confirmDelete = false">ไม่ลบ</button>
-              <button type="button" class="btn-danger flex-1" @click="emit('remove')">ยืนยันลบ</button>
+              <button type="button" class="btn-ghost flex-1" @click="confirmDelete = false">ไม่ย้าย</button>
+              <button type="button" class="btn-danger flex-1" @click="emit('remove')">ย้ายไปถังขยะ</button>
             </div>
           </div>
         </template>

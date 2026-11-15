@@ -31,7 +31,7 @@ provide(TripKey, ctx)
 async function load() {
   try {
     const t = await repo.getTrip(props.slug)
-    if (!t) { await router.replace('/'); return }
+    if (!t || t.deleted_at) { await router.replace('/'); return } // missing or in the trash
     trip.value = t
     ctx.guide = guides[props.slug] ?? null
     ctx.base = `/t/${props.slug}`

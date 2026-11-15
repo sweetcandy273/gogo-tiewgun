@@ -8,6 +8,10 @@ export interface Repo {
   getTrip(slug: string): Promise<Trip | null>
   createTrip(input: TripInput): Promise<Trip>
   updateTrip(id: string, patch: Partial<TripInput>): Promise<Trip>
+  /** soft delete: hide the trip (restorable) */
+  trashTrip(id: string): Promise<void>
+  restoreTrip(id: string): Promise<void>
+  /** delete for good (only offered from the trash) */
   removeTrip(id: string): Promise<void>
   listExpenses(tripId: string): Promise<Expense[]>
   createExpense(input: ExpenseInput): Promise<Expense>
@@ -58,11 +62,12 @@ const localChecks = {
 
 const CHECK_COLS = 'trip_id,item_key,label,done,done_by,created_at'
 
-const TRIP_COLS = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
+const TRIP_COLS_BASE = 'id,slug,name,start_date,end_date,currency,rate_to_thb'
+export const TRASH_NEEDS_SQL = 'ถังขยะยังใช้ไม่ได้ ต้องรัน SQL 009 ใน Supabase ก่อน'
 const EXP_COLS_BASE = 'id,trip_id,spent_on,category,title,currency,amount,paid_by,split,note,created_at,updated_at'
 
 /** Which optional DB migrations are applied (detected at runtime so the app keeps working before SQL is run). */
-export const dbFeatures = reactive({ settled: true, outfits: true, clothMoney: true, checklist: true })
+export const dbFeatures = reactive({ settled: true, outfits: true, clothMoney: true, checklist: true, trash: true })
 
 /** Postgres/PostgREST "column or table does not exist" style errors. */
 export function isMissingSchema(err: unknown): boolean {
@@ -88,27 +93,59 @@ class SupabaseRepo implements Repo {
     return supabase
   }
 
+  private get tripCols() { return dbFeatures.trash ? TRIP_COLS_BASE + ',deleted_at' : TRIP_COLS_BASE }
+  /** run once; if the deleted_at column is missing, switch the trash off and retry without it */
+  private async withTrashFallback<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn()
+    } catch (e) {
+      if (dbFeatures.trash && isMissingSchema(e) && /deleted_at/.test((e as { message?: string }).message ?? '')) {
+        dbFeatures.trash = false
+        return fn()
+      }
+      throw e
+    }
+  }
+
   async listTrips() {
-    const { data, error } = await this.db.from('trips').select(TRIP_COLS)
-      .order('start_date', { ascending: false, nullsFirst: true })
-    if (error) throw error
-    return (data ?? []).map(toTrip)
+    return this.withTrashFallback(async () => {
+      const { data, error } = await this.db.from('trips').select(this.tripCols)
+        .order('start_date', { ascending: false, nullsFirst: true })
+      if (error) throw error
+      return ((data ?? []) as unknown as Record<string, unknown>[]).map(toTrip)
+    })
   }
   async getTrip(slug: string) {
-    const { data, error } = await this.db.from('trips').select(TRIP_COLS).eq('slug', slug).maybeSingle()
-    if (error) throw error
-    return data ? toTrip(data) : null
+    return this.withTrashFallback(async () => {
+      const { data, error } = await this.db.from('trips').select(this.tripCols).eq('slug', slug).maybeSingle()
+      if (error) throw error
+      return data ? toTrip(data as unknown as Record<string, unknown>) : null
+    })
   }
   async createTrip(input: TripInput) {
-    const { data, error } = await this.db.from('trips').insert(input).select(TRIP_COLS).single()
-    if (error) throw error
-    return toTrip(data)
+    return this.withTrashFallback(async () => {
+      const { data, error } = await this.db.from('trips').insert(input).select(this.tripCols).single()
+      if (error) throw error
+      return toTrip(data as unknown as Record<string, unknown>)
+    })
   }
   async updateTrip(id: string, patch: Partial<TripInput>) {
-    const { data, error } = await this.db.from('trips').update(patch).eq('id', id).select(TRIP_COLS).single()
-    if (error) throw error
-    return toTrip(data)
+    return this.withTrashFallback(async () => {
+      const { data, error } = await this.db.from('trips').update(patch).eq('id', id).select(this.tripCols).single()
+      if (error) throw error
+      return toTrip(data as unknown as Record<string, unknown>)
+    })
   }
+  private async setDeleted(id: string, at: string | null) {
+    if (!dbFeatures.trash) throw new Error(TRASH_NEEDS_SQL)
+    const { error } = await this.db.from('trips').update({ deleted_at: at }).eq('id', id)
+    if (error) {
+      if (isMissingSchema(error)) { dbFeatures.trash = false; throw new Error(TRASH_NEEDS_SQL) }
+      throw error
+    }
+  }
+  async trashTrip(id: string) { await this.setDeleted(id, new Date().toISOString()) }
+  async restoreTrip(id: string) { await this.setDeleted(id, null) }
   async removeTrip(id: string) {
     const { error } = await this.db.from('trips').delete().eq('id', id)
     if (error) throw error
@@ -318,6 +355,15 @@ class LocalRepo implements Repo {
     all[i] = { ...all[i], ...patch }
     this.write('gogo-demo-trips', all)
     return all[i]
+  }
+  async trashTrip(id: string) { this.setDeleted(id, new Date().toISOString()) }
+  async restoreTrip(id: string) { this.setDeleted(id, null) }
+  private setDeleted(id: string, at: string | null) {
+    const all = this.trips()
+    const i = all.findIndex((t) => t.id === id)
+    if (i < 0) throw new Error('ไม่พบทริปนี้')
+    all[i] = { ...all[i], deleted_at: at }
+    this.write('gogo-demo-trips', all)
   }
   async removeTrip(id: string) {
     this.write('gogo-demo-trips', this.trips().filter((t) => t.id !== id))

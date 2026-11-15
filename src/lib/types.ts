@@ -10,8 +10,10 @@ export interface Trip {
   end_date: string | null
   currency: string // local currency, ISO 4217
   rate_to_thb: number
+  /** set = in the trash (restorable); needs migration 009 */
+  deleted_at?: string | null
 }
-export type TripInput = Omit<Trip, 'id'>
+export type TripInput = Omit<Trip, 'id' | 'deleted_at'>
 
 export interface Expense {
   id: string

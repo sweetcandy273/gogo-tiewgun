@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { ChevronRight, Plus, Trash2 } from 'lucide-vue-next'
+import { ChevronRight, Plus, RotateCcw, Trash2 } from 'lucide-vue-next'
 import TripForm from '../components/TripForm.vue'
+import { showToast } from '../lib/copy'
 import { errMessage, repo } from '../lib/repo'
 import { deleteAllowed, needsTypedName } from '../lib/tripDelete'
 import type { Trip, TripInput } from '../lib/types'
 import { guides } from '../trips/registry'
 
 const trips = ref<Trip[]>([])
+const active = computed(() => trips.value.filter((t) => !t.deleted_at))
+const trashed = computed(() => trips.value.filter((t) => !!t.deleted_at))
+const trashOpen = ref(false)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const formOpen = ref(false)
@@ -19,6 +23,25 @@ const removing = ref(false)
 const hasGuide = (t: Trip) => !!guides[t.slug]
 
 function askDelete(t: Trip) { deleting.value = t; typed.value = '' }
+
+async function trash(t: Trip) {
+  try {
+    await repo.trashTrip(t.id)
+    await load()
+    showToast(`ย้าย "${t.name}" ไปถังขยะแล้ว`)
+  } catch (e) {
+    error.value = errMessage(e)
+  }
+}
+async function restore(t: Trip) {
+  try {
+    await repo.restoreTrip(t.id)
+    await load()
+    showToast(`กู้คืน "${t.name}" แล้ว`)
+  } catch (e) {
+    error.value = errMessage(e)
+  }
+}
 async function confirmDelete() {
   const t = deleting.value
   if (!t || removing.value || !deleteAllowed(t.name, typed.value, hasGuide(t))) return
@@ -38,6 +61,7 @@ async function confirmDelete() {
 async function load() {
   try {
     trips.value = await repo.listTrips()
+    if (!trips.value.some((t) => t.deleted_at)) trashOpen.value = false // empty trash starts closed next time
     error.value = null
   } catch (e) {
     error.value = errMessage(e)
@@ -78,15 +102,15 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
 
     <p v-if="error" class="mb-3 rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800">{{ error }}</p>
     <p v-if="loading" class="py-10 text-center text-sm text-mute">กำลังโหลด…</p>
-    <p v-else-if="!trips.length" class="py-10 text-center text-sm text-mute">ยังไม่มีทริป กด + เพื่อสร้าง</p>
+    <p v-else-if="!active.length" class="py-10 text-center text-sm text-mute">ยังไม่มีทริป กด + เพื่อสร้าง</p>
 
     <div class="space-y-3">
-      <div v-for="(t, i) in trips" :key="t.id" class="relative">
+      <div v-for="(t, i) in active" :key="t.id" class="relative">
       <RouterLink :to="`/t/${t.slug}`" class="card relative block overflow-hidden !p-0 transition active:scale-[.99]">
         <div class="relative h-36 bg-gradient-to-br from-navy to-sea">
           <img v-if="cover(t)" :src="cover(t)" alt="" class="absolute inset-0 size-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/30 to-transparent" />
-          <span class="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-bold text-navy">ทริป {{ trips.length - i }}</span>
+          <span class="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-bold text-navy">ทริป {{ active.length - i }}</span>
           <div class="absolute inset-x-0 bottom-0 p-4 text-white">
             <h2 class="text-xl font-bold">{{ t.name }}</h2>
             <p class="text-sm opacity-90">{{ range(t) }} · {{ t.currency }}</p>
@@ -95,16 +119,33 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
         </div>
       </RouterLink>
       <button class="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-white/90 text-brick shadow-sm active:scale-95"
-              :aria-label="`ลบทริป ${t.name}`" @click="askDelete(t)"><Trash2 class="size-4" /></button>
+              :aria-label="`ย้ายทริป ${t.name} ไปถังขยะ`" @click="trash(t)"><Trash2 class="size-4" /></button>
       </div>
     </div>
+
+    <section v-if="trashed.length" class="mt-6">
+      <button class="flex w-full items-center justify-between py-2 text-sm font-semibold text-mute" @click="trashOpen = !trashOpen">
+        <span class="flex items-center gap-1.5"><Trash2 class="size-4" /> ถังขยะ ({{ trashed.length }})</span>
+        <span class="text-xs">{{ trashOpen ? 'ซ่อน' : 'ดู' }}</span>
+      </button>
+      <div v-if="trashOpen" class="space-y-2">
+        <div v-for="t in trashed" :key="t.id" class="card flex items-center gap-2 !p-3">
+          <div class="min-w-0 flex-1">
+            <p class="truncate font-semibold">{{ t.name }}</p>
+            <p class="text-xs text-mute">{{ range(t) }} · {{ t.currency }}</p>
+          </div>
+          <button class="btn-ghost !px-3 !py-2 text-sm" @click="restore(t)"><RotateCcw class="size-4" /> กู้คืน</button>
+          <button class="rounded-full p-2 text-mute hover:text-brick" :aria-label="`ลบ ${t.name} ถาวร`" @click="askDelete(t)"><Trash2 class="size-4" /></button>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div v-if="deleting" class="fixed inset-0 z-40 flex items-end justify-center bg-black/40 sm:items-center" @click.self="deleting = null">
     <form class="w-full max-w-lg space-y-3 rounded-t-3xl bg-cream p-5 sm:rounded-3xl" style="padding-bottom: calc(1.25rem + env(safe-area-inset-bottom))"
           @submit.prevent="confirmDelete">
-      <h2 class="text-lg font-bold text-brick">ลบทริป "{{ deleting.name }}" ?</h2>
-      <p class="text-sm text-ink/80">ค่าใช้จ่าย เสื้อผ้า ชุด เช็กลิสต์ และข้อมูลการจองของทริปนี้จะหายถาวร กู้คืนไม่ได้</p>
+      <h2 class="text-lg font-bold text-brick">ลบ "{{ deleting.name }}" ถาวร ?</h2>
+      <p class="text-sm text-ink/80">ลบจริงแล้วกู้คืนไม่ได้ ค่าใช้จ่าย เสื้อผ้า ชุด เช็กลิสต์ และข้อมูลการจองของทริปนี้จะหายหมด</p>
       <div v-if="needsTypedName(hasGuide(deleting))">
         <label class="label" for="del-name">พิมพ์ชื่อทริปเพื่อยืนยัน</label>
         <input id="del-name" v-model="typed" class="field" autocomplete="off" :placeholder="deleting.name" />

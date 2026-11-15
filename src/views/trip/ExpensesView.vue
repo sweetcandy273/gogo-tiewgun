@@ -127,7 +127,7 @@ async function saveTrip(input: TripInput) {
 }
 async function removeTrip() {
   try {
-    await repo.removeTrip(trip.value.id)
+    await repo.trashTrip(trip.value.id)
     await router.replace('/')
   } catch (e) {
     error.value = errMessage(e)
