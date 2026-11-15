@@ -13,6 +13,8 @@ const trips = ref<Trip[]>([])
 const active = computed(() => trips.value.filter((t) => !t.deleted_at))
 const trashed = computed(() => trips.value.filter((t) => !!t.deleted_at))
 const trashOpen = ref(false)
+const manage = ref(false) // "จัดการ" mode: the move-to-trash buttons only exist while this is on
+const trashing = ref<Trip | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const formOpen = ref(false)
@@ -24,10 +26,14 @@ const hasGuide = (t: Trip) => !!guides[t.slug]
 
 function askDelete(t: Trip) { deleting.value = t; typed.value = '' }
 
-async function trash(t: Trip) {
+async function trash() {
+  const t = trashing.value
+  if (!t) return
+  trashing.value = null
   try {
     await repo.trashTrip(t.id)
     await load()
+    manage.value = false
     showToast(`ย้าย "${t.name}" ไปถังขยะแล้ว`)
   } catch (e) {
     error.value = errMessage(e)
@@ -98,6 +104,8 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
         <h1 class="text-3xl font-bold text-navy">gogo เที่ยวกัน</h1>
         <p class="text-sm text-mute">ทริปของอุ้มกับทิว</p>
       </div>
+      <button v-if="active.length" class="rounded-full px-3 py-1.5 text-sm font-medium ring-1" :class="manage ? 'bg-navy text-white ring-transparent' : 'text-mute ring-black/10'"
+              @click="manage = !manage">{{ manage ? 'เสร็จ' : 'จัดการ' }}</button>
     </header>
 
     <p v-if="error" class="mb-3 rounded-xl bg-rose-100 px-3 py-2 text-sm text-rose-800">{{ error }}</p>
@@ -106,7 +114,8 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
 
     <div class="space-y-3">
       <div v-for="(t, i) in active" :key="t.id" class="relative">
-      <RouterLink :to="`/t/${t.slug}`" class="card relative block overflow-hidden !p-0 transition active:scale-[.99]">
+      <RouterLink :to="`/t/${t.slug}`" class="card relative block overflow-hidden !p-0 transition active:scale-[.99]"
+                  :class="manage ? 'opacity-70' : ''" @click="manage && $event.preventDefault()">
         <div class="relative h-36 bg-gradient-to-br from-navy to-sea">
           <img v-if="cover(t)" :src="cover(t)" alt="" class="absolute inset-0 size-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/30 to-transparent" />
@@ -118,8 +127,8 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
           <ChevronRight class="absolute right-3 bottom-4 size-6 text-white/80" />
         </div>
       </RouterLink>
-      <button class="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-white/90 text-brick shadow-sm active:scale-95"
-              :aria-label="`ย้ายทริป ${t.name} ไปถังขยะ`" @click="trash(t)"><Trash2 class="size-4" /></button>
+      <button v-if="manage" class="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-brick shadow-sm active:scale-95"
+              :aria-label="`ย้ายทริป ${t.name} ไปถังขยะ`" @click="trashing = t"><Trash2 class="size-4" /> ย้ายไปถังขยะ</button>
       </div>
     </div>
 
@@ -139,6 +148,17 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
         </div>
       </div>
     </section>
+  </div>
+
+  <div v-if="trashing" class="fixed inset-0 z-40 flex items-end justify-center bg-black/40 sm:items-center" @click.self="trashing = null">
+    <div class="w-full max-w-lg space-y-3 rounded-t-3xl bg-cream p-5 sm:rounded-3xl" style="padding-bottom: calc(1.25rem + env(safe-area-inset-bottom))">
+      <h2 class="text-lg font-bold">ย้าย "{{ trashing.name }}" ไปถังขยะ ?</h2>
+      <p class="text-sm text-ink/80">ทริปจะหายจากหน้านี้ แต่ข้อมูลยังอยู่ครบ กู้คืนได้จากถังขยะด้านล่าง</p>
+      <div class="flex gap-2">
+        <button class="btn-ghost flex-1" @click="trashing = null">ไม่ย้าย</button>
+        <button class="btn-danger flex-1" @click="trash">ย้ายไปถังขยะ</button>
+      </div>
+    </div>
   </div>
 
   <div v-if="deleting" class="fixed inset-0 z-40 flex items-end justify-center bg-black/40 sm:items-center" @click.self="deleting = null">
