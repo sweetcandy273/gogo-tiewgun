@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { ChevronRight, Plus } from 'lucide-vue-next'
+import { ChevronRight, Plus, Trash2 } from 'lucide-vue-next'
 import TripForm from '../components/TripForm.vue'
 import { errMessage, repo } from '../lib/repo'
+import { deleteAllowed, needsTypedName } from '../lib/tripDelete'
 import type { Trip, TripInput } from '../lib/types'
 import { guides } from '../trips/registry'
 
@@ -12,6 +13,27 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const formOpen = ref(false)
 const router = useRouter()
+const deleting = ref<Trip | null>(null)
+const typed = ref('')
+const removing = ref(false)
+const hasGuide = (t: Trip) => !!guides[t.slug]
+
+function askDelete(t: Trip) { deleting.value = t; typed.value = '' }
+async function confirmDelete() {
+  const t = deleting.value
+  if (!t || removing.value || !deleteAllowed(t.name, typed.value, hasGuide(t))) return
+  removing.value = true
+  try {
+    await repo.removeTrip(t.id)
+    deleting.value = null
+    await load()
+  } catch (e) {
+    error.value = errMessage(e)
+    deleting.value = null
+  } finally {
+    removing.value = false
+  }
+}
 
 async function load() {
   try {
@@ -59,8 +81,8 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
     <p v-else-if="!trips.length" class="py-10 text-center text-sm text-mute">ยังไม่มีทริป กด + เพื่อสร้าง</p>
 
     <div class="space-y-3">
-      <RouterLink v-for="(t, i) in trips" :key="t.id" :to="`/t/${t.slug}`"
-        class="card relative block overflow-hidden !p-0 transition active:scale-[.99]">
+      <div v-for="(t, i) in trips" :key="t.id" class="relative">
+      <RouterLink :to="`/t/${t.slug}`" class="card relative block overflow-hidden !p-0 transition active:scale-[.99]">
         <div class="relative h-36 bg-gradient-to-br from-navy to-sea">
           <img v-if="cover(t)" :src="cover(t)" alt="" class="absolute inset-0 size-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/30 to-transparent" />
@@ -72,7 +94,26 @@ const cover = (t: Trip) => guides[t.slug]?.hero.src
           <ChevronRight class="absolute right-3 bottom-4 size-6 text-white/80" />
         </div>
       </RouterLink>
+      <button class="absolute top-3 right-3 grid size-9 place-items-center rounded-full bg-white/90 text-brick shadow-sm active:scale-95"
+              :aria-label="`ลบทริป ${t.name}`" @click="askDelete(t)"><Trash2 class="size-4" /></button>
+      </div>
     </div>
+  </div>
+
+  <div v-if="deleting" class="fixed inset-0 z-40 flex items-end justify-center bg-black/40 sm:items-center" @click.self="deleting = null">
+    <form class="w-full max-w-lg space-y-3 rounded-t-3xl bg-cream p-5 sm:rounded-3xl" style="padding-bottom: calc(1.25rem + env(safe-area-inset-bottom))"
+          @submit.prevent="confirmDelete">
+      <h2 class="text-lg font-bold text-brick">ลบทริป "{{ deleting.name }}" ?</h2>
+      <p class="text-sm text-ink/80">ค่าใช้จ่าย เสื้อผ้า ชุด เช็กลิสต์ และข้อมูลการจองของทริปนี้จะหายถาวร กู้คืนไม่ได้</p>
+      <div v-if="needsTypedName(hasGuide(deleting))">
+        <label class="label" for="del-name">พิมพ์ชื่อทริปเพื่อยืนยัน</label>
+        <input id="del-name" v-model="typed" class="field" autocomplete="off" :placeholder="deleting.name" />
+      </div>
+      <div class="flex gap-2">
+        <button type="button" class="btn-ghost flex-1" @click="deleting = null">ไม่ลบ</button>
+        <button class="btn-danger flex-1" :disabled="removing || !deleteAllowed(deleting.name, typed, hasGuide(deleting))">{{ removing ? 'กำลังลบ…' : 'ลบถาวร' }}</button>
+      </div>
+    </form>
   </div>
 
   <button class="fixed right-5 bottom-8 z-30 grid size-14 place-items-center rounded-full bg-brick text-white shadow-lg active:scale-95" aria-label="สร้างทริปใหม่" @click="formOpen = true">
