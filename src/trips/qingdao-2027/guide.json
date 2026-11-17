@@ -466,14 +466,14 @@
   },
   {
    "label": "DAY 4",
-   "title": "เสาร์ 16 ม.ค. · เบียร์ ไถตง และวิวเมือง",
+   "title": "เสาร์ 16 ม.ค. · ไถตง และวิวเมือง",
    "transport": "เดิน + Line 2 / Line 4 (Qingdao Metro)",
    "accent": "#B5533C",
    "items": [
     {
      "time": "~08:30",
      "title": "มื้อเช้าแบบคนท้องถิ่น · แผงอาหารเช้า / ร้านซาลาเปาแถวไถตง",
-     "body": "ยังไม่มีร้านที่ยืนยันได้ว่าเดินจากโรงแรมใกล้ ๆ → เปิด Amap ค้น <span class=\"zh\">早餐</span> · <span class=\"zh\">包子</span> · <span class=\"zh\">早市</span> แล้วเลือกที่เดิน ≤10–15 นาที <span class=\"tag tag-chk\">เช็กใน Amap</span><br/><b>ตลาดที่มีข้อมูล</b> (ระยะจากโรงแรมยังไม่ทราบ): <b><span class=\"zh\">海泊河早市</span></b> (<span class=\"zh\">城运康定路农贸市场</span>) เริ่ม ~05:00 ไป 7–8 โมงของครบ · ดังเรื่อง<b>ซาลาเปาใหญ่ซานตง</b> <span class=\"zh\">大包</span> เช่น <span class=\"zh\">大虾包</span> ไส้กุ้ง · <span class=\"zh\">萝卜粉丝虾皮包</span> หัวไชเท้า-วุ้นเส้น-กุ้งแห้ง · หรือ <b><span class=\"zh\">十五大街便民摊点群</span></b> 06:00–18:00 (ข้อมูลปี 2563)<br/><b>สั่งแบบคนชิงเต่า:</b> <span class=\"zh\">甜沫</span> โจ๊กข้าวฟ่างใส่ผัก-วุ้นเส้น-ฟองเต้าหู้ เค็มเผ็ดนิด ๆ · <span class=\"zh\">油条</span>+<span class=\"zh\">豆浆</span> ปาท่องโก๋+นมถั่วเหลือง · <span class=\"zh\">馄饨</span> เกี๊ยวน้ำ · <span class=\"zh\">馅饼</span> แป้งทอดสอดไส้ · งบ ~¥10–15 (≈฿46–69)/คน <span class=\"tag tag-est\">ประมาณการ</span> · ถามเนื้อ: <span class=\"zh\">这是猪肉吗？</span><br/>สำรอง: Hangzhou Small Steamed Bun (Dengzhou Road) ร้านเดียวกับวันที่ 3 · หรือร้านสะดวกซื้อ: <span class=\"zh\">茶叶蛋</span> ไข่ต้มน้ำชา · <span class=\"zh\">包子</span> · <span class=\"zh\">豆浆</span> · ขออุ่น <span class=\"zh\">可以加热吗？</span> · กลับถึงพิพิธภัณฑ์ก่อน 10:00",
+     "body": "ยังไม่มีร้านที่ยืนยันได้ว่าเดินจากโรงแรมใกล้ ๆ → เปิด Amap ค้น <span class=\"zh\">早餐</span> · <span class=\"zh\">包子</span> · <span class=\"zh\">早市</span> แล้วเลือกที่เดิน ≤10–15 นาที <span class=\"tag tag-chk\">เช็กใน Amap</span><br/><b>ตลาดที่มีข้อมูล</b> (ระยะจากโรงแรมยังไม่ทราบ): <b><span class=\"zh\">海泊河早市</span></b> (<span class=\"zh\">城运康定路农贸市场</span>) เริ่ม ~05:00 ไป 7–8 โมงของครบ · ดังเรื่อง<b>ซาลาเปาใหญ่ซานตง</b> <span class=\"zh\">大包</span> เช่น <span class=\"zh\">大虾包</span> ไส้กุ้ง · <span class=\"zh\">萝卜粉丝虾皮包</span> หัวไชเท้า-วุ้นเส้น-กุ้งแห้ง · หรือ <b><span class=\"zh\">十五大街便民摊点群</span></b> 06:00–18:00 (ข้อมูลปี 2563)<br/><b>สั่งแบบคนชิงเต่า:</b> <span class=\"zh\">甜沫</span> โจ๊กข้าวฟ่างใส่ผัก-วุ้นเส้น-ฟองเต้าหู้ เค็มเผ็ดนิด ๆ · <span class=\"zh\">油条</span>+<span class=\"zh\">豆浆</span> ปาท่องโก๋+นมถั่วเหลือง · <span class=\"zh\">馄饨</span> เกี๊ยวน้ำ · <span class=\"zh\">馅饼</span> แป้งทอดสอดไส้ · งบ ~¥10–15 (≈฿46–69)/คน <span class=\"tag tag-est\">ประมาณการ</span> · ถามเนื้อ: <span class=\"zh\">这是猪肉吗？</span><br/>สำรอง: Hangzhou Small Steamed Bun (Dengzhou Road) ร้านเดียวกับวันที่ 3 · หรือร้านสะดวกซื้อ: <span class=\"zh\">茶叶蛋</span> ไข่ต้มน้ำชา · <span class=\"zh\">包子</span> · <span class=\"zh\">豆浆</span> · ขออุ่น <span class=\"zh\">可以加热吗？</span>",
      "zh": [
       "早餐",
       "包子",
@@ -498,14 +498,11 @@
     },
     {
      "time": "10:00",
-     "title": "พิพิธภัณฑ์เบียร์ชิงเต่า <span class=\"zh\">青岛啤酒博物馆</span>",
-     "body": "<b>Tsingtao Museum</b> — 56-1 Dengzhou Road (<span class=\"zh\">登州路56号</span>) · เดินจากโรงแรม 3–5 นาที · ตั๋ว <b>¥67 (฿308)</b>/คน <span class=\"tag tag-ok\">ราคาที่คุณเห็นใน Trip.com</span> · เปิด 08:30 ปิด 17:30–18:00 (แหล่งข้อมูลไม่ตรงกัน) <span class=\"tag tag-chk\">ตรวจก่อนไป</span> · 1.5–2 ชม.",
-     "zh": [
-      "青岛啤酒博物馆",
-      "登州路56号"
-     ],
+     "title": "ว่าง · ยังไม่กำหนด",
+     "body": "ช่วงสายว่างไว้ก่อน · เติมทีหลังได้",
+     "zh": [],
      "tags": [],
-     "minor": false
+     "minor": true
     },
     {
      "time": "~12:30",
@@ -565,21 +562,8 @@
      "minor": false
     }
    ],
-   "cards": [
-    {
-     "title": "ถ่ายรูปที่พิพิธภัณฑ์",
-     "body": "<ul><li>ถ่ายภายนอกให้เห็นกระป๋องเบียร์ยักษ์ + ตัวหนังสือ <span class=\"zh\">青岛啤酒</span></li> <li>ภาพนี้ถ่ายตอนเย็น/ฟ้าครึ้ม ตอนไปจริงแสงจะต่างออกไป</li> <li>ถ้าซื้อตั๋วแบบทัวร์/ชิมเบียร์ เช็กรอบและแพ็กเกจในแอป <span class=\"tag tag-chk\">ต้องเช็ก</span></li></ul>",
-     "zh": [
-      "青岛啤酒"
-     ]
-    }
-   ],
-   "photos": [
-    {
-     "src": "/trips/qingdao-2027/photo-04.webp",
-     "caption": "หน้าพิพิธภัณฑ์เบียร์ชิงเต่า (ภาพจากคุณ)"
-    }
-   ]
+   "cards": [],
+   "photos": []
   },
   {
    "label": "DAY 5",

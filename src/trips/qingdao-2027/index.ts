@@ -76,13 +76,13 @@ const guide: Guide = {
   budget: [
     { item: 'แพ็กเกจ (ตั๋ว CZ 4 เที่ยว + โรงแรมชิงเต่า)', thb: '12,390', status: 'ok' },
     { item: 'Naiya Hotel กวางโจว', thb: '385', status: 'ok' },
-    { item: 'พิพิธภัณฑ์เบียร์ + สวนสัตว์ (¥75.5)', thb: '347', status: 'ok' },
+    { item: 'สวนสัตว์ (¥8.5)', thb: '39', status: 'ok' },
     { item: 'รถ/เดินทางในจีน (¥156–253)', thb: '718–1,164', status: 'est' },
     { item: 'อาหาร 5 วัน (¥300–500)', thb: '1,380–2,300', status: 'est' },
     { item: 'ประกันเดินทาง Sompo Standard', thb: '413.64', status: 'ok' },
     { item: 'eSIM (ยังไม่ซื้อ)', thb: '569', status: 'est' },
   ],
-  budgetTotal: '16,203–17,569',
+  budgetTotal: '15,895–17,261',
   budgetNote: 'ต่อคน · ไม่รวมช้อปปิ้งและเสื้อผ้า · ¥1 ≈ ฿4.6 (จากเล่ม v18)',
 }
 
